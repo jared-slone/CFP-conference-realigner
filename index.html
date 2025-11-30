@@ -561,26 +561,36 @@
             // We store ID for reference, but we will read color from style for truth
             card.dataset.confId = conf.id;
             
+            // Header
             card.innerHTML = `
                 <div class="conference-header" style="background-color: ${conf.color};">
                     <span class="conference-name">${conf.name}</span>
                     <span class="team-count">${conf.teams.length}</span>
                 </div>
-                <ul class="team-list" id="builder-list-${conf.id}">
-                    ${conf.teams.map(team => `
-                        <li class="team-item" data-team='${JSON.stringify(team)}'>
-                            <div class="school-info">
-                                <span class="school-name">${team.name}</span>
-                                <span class="mascot-name">${team.mascot}</span>
-                            </div>
-                        </li>
-                    `).join('')}
-                </ul>
+                <ul class="team-list" id="builder-list-${conf.id}"></ul>
             `;
+            
+            // Teams (Built via DOM to avoid quote escaping issues)
+            const list = card.querySelector('.team-list');
+            conf.teams.forEach(team => {
+                const li = document.createElement('li');
+                li.className = 'team-item';
+                // Safe data assignment
+                li.dataset.team = JSON.stringify(team);
+                
+                li.innerHTML = `
+                    <div class="school-info">
+                        <span class="school-name">${team.name}</span>
+                        <span class="mascot-name">${team.mascot}</span>
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+
             grid.appendChild(card);
             
             // Enable Drag and Drop
-            new Sortable(card.querySelector('.team-list'), {
+            new Sortable(list, {
                 group: 'conferences',
                 animation: 150,
                 ghostClass: 'sortable-ghost',
@@ -654,41 +664,46 @@
 
     // --- CORE LOGIC: SCRAPE DOM TO BUILD DATA ---
     function analyzeBuilder() {
-        const grid = document.getElementById('builderGrid');
-        const cards = grid.querySelectorAll('.conference-card');
-        
-        let builtData = [];
-        
-        cards.forEach(card => {
-            // 1. Get Visual Properties from the Card Header
-            const header = card.querySelector('.conference-header');
-            const name = card.querySelector('.conference-name').innerText;
-            // Get the computed background color so we match the visual exactly
-            const color = header.style.backgroundColor;
+        try {
+            const grid = document.getElementById('builderGrid');
+            const cards = grid.querySelectorAll('.conference-card');
+            
+            let builtData = [];
+            
+            cards.forEach(card => {
+                // 1. Get Visual Properties from the Card Header
+                const header = card.querySelector('.conference-header');
+                const name = card.querySelector('.conference-name').innerText;
+                const color = header.style.backgroundColor;
 
-            let newConf = {
-                name: name,
-                color: color, 
-                teams: []
-            };
+                let newConf = {
+                    name: name,
+                    color: color, 
+                    teams: []
+                };
 
-            // 2. Get Teams currently inside this card
-            const items = card.querySelectorAll('.team-item');
-            items.forEach(item => {
-                const teamData = JSON.parse(item.dataset.team);
-                // We only want the team geo data, we assign the NEW conference details
-                newConf.teams.push({
-                    name: teamData.name,
-                    mascot: teamData.mascot,
-                    lat: teamData.lat,
-                    lng: teamData.lng
+                // 2. Get Teams currently inside this card
+                const items = card.querySelectorAll('.team-item');
+                items.forEach(item => {
+                    // This now safely reads the object, even if it has quotes
+                    if (item.dataset.team) {
+                        const teamData = JSON.parse(item.dataset.team);
+                        newConf.teams.push({
+                            name: teamData.name,
+                            mascot: teamData.mascot,
+                            lat: teamData.lat,
+                            lng: teamData.lng
+                        });
+                    }
                 });
+
+                if(newConf.teams.length > 0) builtData.push(newConf);
             });
 
-            if(newConf.teams.length > 0) builtData.push(newConf);
-        });
-
-        updateAnalysis(builtData);
+            updateAnalysis(builtData);
+        } catch (e) {
+            console.error("Error analyzing builder:", e);
+        }
     }
 
     function updateAnalysis(data) {
@@ -714,7 +729,7 @@
             conf.teams.forEach(team => {
                 const marker = L.circleMarker([team.lat, team.lng], {
                     radius: 6,
-                    fillColor: conf.color, // Uses the color scraped from the card
+                    fillColor: conf.color, 
                     color: "#fff",
                     weight: 1,
                     opacity: 1,
