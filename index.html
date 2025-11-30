@@ -21,7 +21,7 @@
         
         #searchInput { padding: 10px 15px; border: 2px solid #ddd; border-radius: 25px; width: 200px; outline: none; font-size: 0.95rem; }
         #searchInput:focus { border-color: var(--primary-color); }
-        select { padding: 10px; border-radius: 6px; border: 1px solid #ddd; font-size: 0.95rem; cursor: pointer; }
+        select { padding: 10px; border-radius: 6px; border: 1px solid #ddd; font-size: 0.95rem; cursor: pointer; min-width: 200px; }
         
         button.action-btn { padding: 10px 20px; border-radius: 25px; background-color: #28a745; color: white; cursor: pointer; border: none; font-weight: bold; font-size: 0.95rem; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.1s; }
         button.secondary-btn { background-color: #007bff; }
@@ -75,10 +75,7 @@
     <div class="control-group">
         <label>Presets:</label>
         <select id="scenarioSelect" onchange="loadScenario(this.value)">
-            <option value="current">Current Alignment (Reset)</option>
-            <option value="geographic">Strict Geographic (East/Mid/West)</option>
-            <option value="pac12return">Return of the Pac-12</option>
-            <option value="superleague">2 Super Leagues (Power 2)</option>
+            <option value="" disabled selected>Loading...</option>
         </select>
     </div>
 
@@ -138,9 +135,44 @@
     // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
         initMap();
-        // Load the default "current" alignment from the JSON file
-        loadScenario('current');
+        // Dynamically load the options logic
+        initPresets();
     });
+
+    // --- DYNAMIC PRESETS LOGIC ---
+    function initPresets() {
+        // Fetch the manifest file from the presets folder
+        fetch('presets/presets_manifest.json')
+            .then(response => {
+                if (!response.ok) throw new Error("Manifest not found");
+                return response.json();
+            })
+            .then(manifest => {
+                const select = document.getElementById('scenarioSelect');
+                select.innerHTML = ''; // Clear "Loading..."
+
+                // Populate options
+                manifest.forEach((preset, index) => {
+                    const option = document.createElement('option');
+                    option.value = preset.file; // The actual filename (e.g. "current.json")
+                    option.innerText = preset.name; // The display name
+                    select.appendChild(option);
+                });
+
+                // Automatically load the first item in the list
+                if (manifest.length > 0) {
+                    loadScenario(manifest[0].file);
+                    select.value = manifest[0].file;
+                }
+            })
+            .catch(error => {
+                console.error("Error loading manifest:", error);
+                const select = document.getElementById('scenarioSelect');
+                select.innerHTML = '<option disabled>Error loading presets</option>';
+                // Fallback: try to load 'current.json' anyway if manifest fails
+                loadScenario('current.json'); 
+            });
+    }
 
     // --- RENDER BUILDER ---
     function renderBuilderView(data) {
@@ -234,14 +266,16 @@
         });
     }
 
-    // --- REFRACTORED: LOAD SCENARIO FROM JSON ---
-    function loadScenario(type) {
-        const filename = `presets/${type}.json`;
+    // --- REFACTORED LOAD SCENARIO ---
+    function loadScenario(filename) {
+        // NOTE: The filename now comes directly from the value (e.g., "current.json")
+        // We assume it is inside the presets folder.
+        const path = `presets/${filename}`;
         
-        fetch(filename)
+        fetch(path)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`Could not load preset: ${filename}`);
+                    throw new Error(`Could not load preset: ${path}`);
                 }
                 return response.json();
             })
@@ -252,7 +286,7 @@
             })
             .catch(error => {
                 console.error("Error loading scenario:", error);
-                alert("Error loading preset. Make sure you are running a local server (not opening the file directly) and that the presets folder exists.");
+                alert("Error loading preset. Check console for details.");
             });
     }
 
