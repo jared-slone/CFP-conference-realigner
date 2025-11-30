@@ -64,7 +64,7 @@
             padding: 10px 15px;
             border: 2px solid #ddd;
             border-radius: 25px;
-            width: 250px;
+            width: 200px;
             outline: none;
             font-size: 0.95rem;
         }
@@ -93,6 +93,10 @@
 
         button.secondary-btn {
             background-color: #007bff;
+        }
+
+        button.neutral-btn {
+            background-color: #6c757d;
         }
 
         button.action-btn:hover { transform: scale(1.05); filter: brightness(1.1); }
@@ -269,7 +273,7 @@
     </div>
     
     <div class="control-group">
-        <label>Scenario:</label>
+        <label>Presets:</label>
         <select id="scenarioSelect" onchange="loadScenario(this.value)">
             <option value="current">Current Alignment (Reset)</option>
             <option value="geographic">Strict Geographic (East/Mid/West)</option>
@@ -279,8 +283,14 @@
     </div>
 
     <div class="control-group">
+        <input type="file" id="importInput" accept=".json" style="display: none;" onchange="importAlignment(this)">
+        <button class="action-btn neutral-btn" onclick="triggerImport()" title="Upload JSON">📂 Import</button>
+        <button class="action-btn neutral-btn" onclick="exportAlignment()" title="Download JSON">💾 Export</button>
+    </div>
+
+    <div class="control-group">
         <button class="action-btn secondary-btn" onclick="addNewConference()">➕ New Conference</button>
-        <button class="action-btn" onclick="analyzeBuilder()">📊 Update Map & Stats</button>
+        <button class="action-btn" onclick="analyzeBuilder()">📊 Update Map</button>
     </div>
 </div>
 
@@ -687,6 +697,11 @@
                  else lower.teams.push(t);
              });
              newData = [super1, super2, lower];
+        } else if (type === 'current') {
+            // Explicitly handle reset
+            renderBuilderView(newData);
+            analyzeBuilder();
+            return;
         }
 
         renderBuilderView(newData);
@@ -696,6 +711,80 @@
         document.getElementById('searchInput').value = '';
     }
 
+    // --- IMPORT / EXPORT LOGIC ---
+    function triggerImport() {
+        document.getElementById('importInput').click();
+    }
+
+    function importAlignment(input) {
+        if (!input.files || !input.files[0]) return;
+        
+        const file = input.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            try {
+                const json = JSON.parse(e.target.result);
+                // Validate basic structure
+                if (Array.isArray(json) && json.length > 0 && json[0].teams) {
+                    renderBuilderView(json);
+                    analyzeBuilder();
+                    // Reset selection so the same file can be selected again if needed
+                    input.value = '';
+                    alert('Alignment loaded successfully!');
+                } else {
+                    alert('Invalid JSON format: Missing conference array or team data.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error parsing JSON file.');
+            }
+        };
+
+        reader.readAsText(file);
+    }
+
+    function exportAlignment() {
+        const cards = document.querySelectorAll('.conference-card');
+        let exportData = [];
+
+        cards.forEach(card => {
+            const header = card.querySelector('.conference-header');
+            const name = card.querySelector('.conference-name').innerText;
+            const id = card.dataset.confId || 'conf-' + Math.floor(Math.random() * 10000);
+            
+            // Get color from the input value to ensure hex format, or fall back to computed style
+            const colorInput = card.querySelector('.color-picker');
+            const color = colorInput.value; 
+
+            let confObj = {
+                id: id,
+                name: name,
+                color: color,
+                teams: []
+            };
+
+            const items = card.querySelectorAll('.team-item');
+            items.forEach(item => {
+                if (item.dataset.team) {
+                    confObj.teams.push(JSON.parse(item.dataset.team));
+                }
+            });
+
+            if (confObj.teams.length > 0) {
+                exportData.push(confObj);
+            }
+        });
+
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "conference_alignment.json");
+        document.body.appendChild(downloadAnchorNode); // required for firefox
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    }
+
     // --- ANALYZE ---
     function analyzeBuilder() {
         try {
@@ -703,18 +792,13 @@
             let builtData = [];
             
             cards.forEach(card => {
-                // Header scraping
-                const header = card.querySelector('.conference-header');
                 const name = card.querySelector('.conference-name').innerText;
-                // Use computed style to get the current color (whether default or changed)
+                // For map coloring, computed style is fine
+                const header = card.querySelector('.conference-header');
                 const color = window.getComputedStyle(header).backgroundColor;
                 
-                // Convert RGB to Hex helper (Leaflet likes Hex sometimes, though RGB works too)
-                // We'll just pass the color string directly as Leaflet handles rgb() strings.
-
                 let newConf = { name: name, color: color, teams: [] };
 
-                // Team scraping
                 const items = card.querySelectorAll('.team-item');
                 items.forEach(item => {
                     if (item.dataset.team) {
