@@ -423,12 +423,6 @@
     "color": "#cc0000",
     "teams": [
       {
-        "name": "Delaware",
-        "mascot": "Fightin' Blue Hens",
-        "lat": 39.681,
-        "lng": -75.752
-      },
-      {
         "name": "FIU",
         "mascot": "Panthers",
         "lat": 25.753,
@@ -463,12 +457,6 @@
         "mascot": "Blue Raiders",
         "lat": 35.847,
         "lng": -86.366
-      },
-      {
-        "name": "Missouri State",
-        "mascot": "Bears",
-        "lat": 37.964,
-        "lng": -91.832
       },
       {
         "name": "New Mexico State",
@@ -566,12 +554,6 @@
         "mascot": "Rockets",
         "lat": 41.657,
         "lng": -83.613
-      },
-      {
-        "name": "UMass",
-        "mascot": "Minutemen",
-        "lat": 42.386,
-        "lng": -72.529
       },
       {
         "name": "Western Michigan",
@@ -889,6 +871,12 @@
         "mascot": "Huskies",
         "lat": 41.808,
         "lng": -72.249
+      },
+      {
+        "name": "UMass",
+        "mascot": "Minutemen",
+        "lat": 42.386,
+        "lng": -72.529
       }
     ]
   }
