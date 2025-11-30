@@ -69,7 +69,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            max-height: 500px; /* Added scroll for very long lists if needed */
+            max-height: 500px; 
         }
 
         .conference-header {
@@ -78,7 +78,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: white; /* Changed text to white for better contrast with custom bg colors */
+            color: white; 
         }
 
         .conference-name { font-weight: 700; font-size: 1.15rem; }
@@ -142,6 +142,47 @@
             border-radius: 50%;
         }
 
+        /* Travel Table Styles */
+        #table-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            font-size: 0.95rem;
+        }
+
+        thead {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .high-travel {
+            color: #c00;
+            font-weight: bold;
+        }
+
         footer {
             text-align: center;
             padding: 2rem;
@@ -168,6 +209,27 @@
 <div id="map-container">
     <h2 style="margin-bottom: 1rem; color: var(--primary-color);">Team Locations</h2>
     <div id="map"></div>
+</div>
+
+<div id="table-container">
+    <h2 style="margin-bottom: 0.5rem; color: var(--primary-color);">Projected Conference Travel Burden</h2>
+    <p style="margin-bottom: 1.5rem; color: #666; font-size: 0.9rem;">
+        <i>Calculated as: (Average distance to all other conference members) × 4 trips.</i>
+    </p>
+    <div style="overflow-x: auto;">
+        <table id="travelTable">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Team</th>
+                    <th>Conference</th>
+                    <th>Avg Dist. to Opponent</th>
+                    <th>Est. Season Travel (Miles)</th>
+                </tr>
+            </thead>
+            <tbody id="travelBody"></tbody>
+        </table>
+    </div>
 </div>
 
 <footer>
@@ -498,9 +560,80 @@
         legend.addTo(map);
     }
 
+    // 4. Calculate Distances and Render Table
+    function deg2rad(deg) {
+        return deg * (Math.PI/180);
+    }
+
+    function getDistanceInMiles(lat1, lon1, lat2, lon2) {
+        const R = 3958.8; // Radius of the earth in miles
+        const dLat = deg2rad(lat2 - lat1); 
+        const dLon = deg2rad(lon2 - lon1); 
+        const a = 
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        const d = R * c; // Distance in miles
+        return d;
+    }
+
+    function generateTravelData() {
+        let allTeamData = [];
+
+        conferences.forEach(conf => {
+            const teams = conf.teams;
+            
+            // Independents don't really have "conference travel" in the same way, skip or handle lightly
+            if(conf.name.includes("Independents")) return;
+
+            teams.forEach(team => {
+                let totalDist = 0;
+                let count = 0;
+
+                teams.forEach(opponent => {
+                    if (team.name !== opponent.name) {
+                        const dist = getDistanceInMiles(team.lat, team.lng, opponent.lat, opponent.lng);
+                        totalDist += dist;
+                        count++;
+                    }
+                });
+
+                const avgDist = count > 0 ? (totalDist / count) : 0;
+                const expectedTravel = avgDist * 4;
+
+                allTeamData.push({
+                    name: team.name,
+                    conf: conf.name.split('(')[0].trim(), // Short name
+                    avg: avgDist,
+                    expected: expectedTravel
+                });
+            });
+        });
+
+        // Sort by expected travel distance (descending)
+        allTeamData.sort((a, b) => b.expected - a.expected);
+
+        // Render Table
+        const tbody = document.getElementById('travelBody');
+        tbody.innerHTML = '';
+
+        allTeamData.forEach((data, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td class="school-name">${data.name}</td>
+                <td>${data.conf}</td>
+                <td>${Math.round(data.avg).toLocaleString()} mi</td>
+                <td class="${data.expected > 8000 ? 'high-travel' : ''}">${Math.round(data.expected).toLocaleString()}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
     // Initial Render
     renderConferences();
     initMap();
+    generateTravelData();
 
 </script>
 
