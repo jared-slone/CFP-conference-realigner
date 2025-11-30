@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Football FBS Conferences & Teams</title>
+    <style>
+        :root {
+            --primary-color: #004d99;
+            --secondary-color: #f4f4f4;
+            --text-color: #333;
+            --card-bg: #fff;
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        p.subtitle {
+            opacity: 0.9;
+            margin-top: 0.5rem;
+        }
+
+        /* Search Bar */
+        .search-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            position: relative;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            border: 2px solid #ddd;
+            border-radius: 50px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: border-color 0.3s;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        #searchInput:focus {
+            border-color: var(--primary-color);
+        }
+
+        /* Grid Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem 3rem 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .conference-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .conference-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 12px rgba(0,0,0,0.1);
+        }
+
+        .conference-header {
+            background-color: #e9ecef;
+            padding: 1rem;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .conference-name {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+        }
+
+        .team-count {
+            background: var(--primary-color);
+            color: white;
+            font-size: 0.8rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+        }
+
+        .team-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .team-item {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background-color 0.2s;
+        }
+
+        .team-item:last-child {
+            border-bottom: none;
+        }
+
+        .team-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Highlighting for search */
+        .highlight {
+            background-color: #fff3cd;
+            font-weight: bold;
+        }
+
+        /* Hidden class for filtering */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>FBS Football Teams</h1>
+    <p class="subtitle">2024-2025 Conference Alignment</p>
+</header>
+
+<div class="search-container">
+    <input type="text" id="searchInput" placeholder="Search for a team (e.g., 'Ohio State', 'Tigers')..." onkeyup="filterTeams()">
+</div>
+
+<div class="container" id="conferenceGrid">
+    </div>
+
+<footer>
+    <p>Data reflects the 2024 NCAA Division I FBS football season alignment.</p>
+    <p><a href="https://www.espn.com/college-football/standings" target="_blank" style="color: #666;">View Official Standings on ESPN</a></p>
+</footer>
+
+<script>
+    // Data Structure
+    const conferences = [
+        {
+            name: "American Athletic Conference (AAC)",
+            teams: [
+                "Army Black Knights", "Charlotte 49ers", "East Carolina Pirates", "Florida Atlantic Owls",
+                "Memphis Tigers", "Navy Midshipmen", "North Texas Mean Green", "Rice Owls",
+                "South Florida Bulls", "Temple Owls", "Tulane Green Wave", "Tulsa Golden Hurricane",
+                "UAB Blazers", "UTSA Roadrunners"
+            ]
+        },
+        {
+            name: "Atlantic Coast Conference (ACC)",
+            teams: [
+                "Boston College Eagles", "California Golden Bears", "Clemson Tigers", "Duke Blue Devils",
+                "Florida State Seminoles", "Georgia Tech Yellow Jackets", "Louisville Cardinals", "Miami Hurricanes",
+                "NC State Wolfpack", "North Carolina Tar Heels", "Pittsburgh Panthers", "SMU Mustangs",
+                "Stanford Cardinal", "Syracuse Orange", "Virginia Cavaliers", "Virginia Tech Hokies",
+                "Wake Forest Demon Deacons"
+            ]
+        },
+        {
+            name: "Big 12 Conference",
+            teams: [
+                "Arizona Wildcats", "Arizona State Sun Devils", "Baylor Bears", "BYU Cougars",
+                "Cincinnati Bearcats", "Colorado Buffaloes", "Houston Cougars", "Iowa State Cyclones",
+                "Kansas Jayhawks", "Kansas State Wildcats", "Oklahoma State Cowboys", "TCU Horned Frogs",
+                "Texas Tech Red Raiders", "UCF Knights", "Utah Utes", "West Virginia Mountaineers"
+            ]
+        },
+        {
+            name: "Big Ten Conference",
+            teams: [
+                "Illinois Fighting Illini", "Indiana Hoosiers", "Iowa Hawkeyes", "Maryland Terrapins",
+                "Michigan Wolverines", "Michigan State Spartans", "Minnesota Golden Gophers", "Nebraska Cornhuskers",
+                "Northwestern Wildcats", "Ohio State Buckeyes", "Oregon Ducks", "Penn State Nittany Lions",
+                "Purdue Boilermakers", "Rutgers Scarlet Knights", "UCLA Bruins", "USC Trojans",
+                "Washington Huskies", "Wisconsin Badgers"
+            ]
+        },
+        {
+            name: "Conference USA",
+            teams: [
+                "FIU Panthers", "Jacksonville State Gamecocks", "Kennesaw State Owls", "Liberty Flames",
+                "Louisiana Tech Bulldogs", "Middle Tennessee Blue Raiders", "New Mexico State Aggies",
+                "Sam Houston Bearkats", "UTEP Miners", "Western Kentucky Hilltoppers"
+            ]
+        },
+        {
+            name: "Mid-American Conference (MAC)",
+            teams: [
+                "Akron Zips", "Ball State Cardinals", "Bowling Green Falcons", "Buffalo Bulls",
+                "Central Michigan Chippewas", "Eastern Michigan Eagles", "Kent State Golden Flashes",
+                "Miami (OH) RedHawks", "Northern Illinois Huskies", "Ohio Bobcats", "Toledo Rockets",
+                "Western Michigan Broncos"
+            ]
+        },
+        {
+            name: "Mountain West Conference",
+            teams: [
+                "Air Force Falcons", "Boise State Broncos", "Colorado State Rams", "Fresno State Bulldogs",
+                "Hawaii Rainbow Warriors", "Nevada Wolf Pack", "New Mexico Lobos", "San Diego State Aztecs",
+                "San Jose State Spartans", "UNLV Rebels", "Utah State Aggies", "Wyoming Cowboys"
+            ]
+        },
+        {
+            name: "Pac-12 Conference",
+            teams: [
+                "Oregon State Beavers", "Washington State Cougars"
+            ]
+        },
+        {
+            name: "Southeastern Conference (SEC)",
+            teams: [
+                "Alabama Crimson Tide", "Arkansas Razorbacks", "Auburn Tigers", "Florida Gators",
+                "Georgia Bulldogs", "Kentucky Wildcats", "LSU Tigers", "Mississippi State Bulldogs",
+                "Missouri Tigers", "Oklahoma Sooners", "Ole Miss Rebels", "South Carolina Gamecocks",
+                "Tennessee Volunteers", "Texas Longhorns", "Texas A&M Aggies", "Vanderbilt Commodores"
+            ]
+        },
+        {
+            name: "Sun Belt Conference",
+            teams: [
+                "Appalachian State Mountaineers", "Arkansas State Red Wolves", "Coastal Carolina Chanticleers",
+                "Georgia Southern Eagles", "Georgia State Panthers", "James Madison Dukes", "Louisiana Ragin' Cajuns",
+                "Marshall Thundering Herd", "Old Dominion Monarchs", "South Alabama Jaguars", "Southern Miss Golden Eagles",
+                "Texas State Bobcats", "Troy Trojans", "ULM Warhawks"
+            ]
+        },
+        {
+            name: "FBS Independents",
+            teams: [
+                "Notre Dame Fighting Irish", "UConn Huskies", "UMass Minutemen"
+            ]
+        }
+    ];
+
+    const grid = document.getElementById('conferenceGrid');
+
+    function renderConferences() {
+        grid.innerHTML = '';
+        conferences.forEach(conf => {
+            // Sort teams alphabetically
+            conf.teams.sort();
+
+            const card = document.createElement('div');
+            card.className = 'conference-card';
+            
+            let teamsHtml = conf.teams.map(team => `<li class="team-item">${team}</li>`).join('');
+
+            card.innerHTML = `
+                <div class="conference-header">
+                    <span class="conference-name">${conf.name}</span>
+                    <span class="team-count">${conf.teams.length}</span>
+                </div>
+                <ul class="team-list">
+                    ${teamsHtml}
+                </ul>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function filterTeams() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toUpperCase();
+        const cards = document.getElementsByClassName('conference-card');
+
+        for (let i = 0; i < cards.length; i++) {
+            const card = cards[i];
+            const items = card.getElementsByClassName('team-item');
+            let hasVisibleTeam = false;
+
+            for (let j = 0; j < items.length; j++) {
+                const item = items[j];
+                const txtValue = item.textContent || item.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    item.style.display = "";
+                    hasVisibleTeam = true;
+                } else {
+                    item.style.display = "none";
+                }
+            }
+
+            // Hide the entire conference card if no teams match
+            if (hasVisibleTeam) {
+                card.style.display = "";
+            } else {
+                card.style.display = "none";
+            }
+        }
+    }
+
+    // Initial Render
+    renderConferences();
+
+</script>
+
+</body>
+</html>
