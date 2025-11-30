@@ -423,8 +423,8 @@
     "color": "#cc0000",
     "teams": [
       {
-        "name": "Delaware"
-        "mascot": "Fightin' Blue Hens"
+        "name": "Delaware",
+        "mascot": "Fightin' Blue Hens",
         "lat": 39.681,
         "lng": 75.752
       },
