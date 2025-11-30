@@ -179,7 +179,7 @@
         }
 
         .high-travel {
-            color: #c00;
+            color: #d32f2f; /* Red for high numbers */
             font-weight: bold;
         }
 
@@ -212,9 +212,9 @@
 </div>
 
 <div id="table-container">
-    <h2 style="margin-bottom: 0.5rem; color: var(--primary-color);">Projected Conference Travel Burden</h2>
+    <h2 style="margin-bottom: 0.5rem; color: var(--primary-color);">Average Conference Travel Burden</h2>
     <p style="margin-bottom: 1.5rem; color: #666; font-size: 0.9rem;">
-        <i>Calculated as: (Average distance to all other conference members) × 4 trips.</i>
+        <i>Calculated as the average distance (in miles) between a team and all other members of their conference.</i>
     </p>
     <div style="overflow-x: auto;">
         <table id="travelTable">
@@ -223,8 +223,7 @@
                     <th>Rank</th>
                     <th>Team</th>
                     <th>Conference</th>
-                    <th>Avg Dist. to Opponent</th>
-                    <th>Est. Season Travel (Miles)</th>
+                    <th>Avg. Distance to Opponents (Miles)</th>
                 </tr>
             </thead>
             <tbody id="travelBody"></tbody>
@@ -599,19 +598,17 @@
                 });
 
                 const avgDist = count > 0 ? (totalDist / count) : 0;
-                const expectedTravel = avgDist * 4;
 
                 allTeamData.push({
                     name: team.name,
                     conf: conf.name.split('(')[0].trim(), // Short name
-                    avg: avgDist,
-                    expected: expectedTravel
+                    avg: avgDist
                 });
             });
         });
 
-        // Sort by expected travel distance (descending)
-        allTeamData.sort((a, b) => b.expected - a.expected);
+        // Sort by average distance (descending)
+        allTeamData.sort((a, b) => b.avg - a.avg);
 
         // Render Table
         const tbody = document.getElementById('travelBody');
@@ -623,8 +620,9 @@
                 <td>${index + 1}</td>
                 <td class="school-name">${data.name}</td>
                 <td>${data.conf}</td>
-                <td>${Math.round(data.avg).toLocaleString()} mi</td>
-                <td class="${data.expected > 8000 ? 'high-travel' : ''}">${Math.round(data.expected).toLocaleString()}</td>
+                <td class="${data.avg > 1200 ? 'high-travel' : ''}">
+                    ${Math.round(data.avg).toLocaleString()}
+                </td>
             `;
             tbody.appendChild(row);
         });
