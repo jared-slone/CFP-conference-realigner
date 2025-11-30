@@ -8,56 +8,256 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     
     <style>
-        /* CSS styles remain exactly the same */
-        :root { --primary-color: #004d99; --secondary-color: #f4f4f4; --text-color: #333; --card-bg: #fff; --border-radius: 8px; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--secondary-color); color: var(--text-color); margin: 0; padding: 0; }
-        header { background-color: var(--primary-color); color: white; padding: 1rem; text-align: center; }
+        :root {
+            --primary-color: #004d99;
+            --secondary-color: #f4f4f4;
+            --text-color: #333;
+            --card-bg: #fff;
+            --border-radius: 8px;
+            --header-height: 140px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header Area */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
         h1 { margin: 0; font-size: 1.8rem; }
         p.subtitle { opacity: 0.8; margin: 0.2rem 0 0 0; font-size: 0.9rem; }
-        
-        .controls-bar { background: white; padding: 1rem; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; justify-content: center; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
-        .control-group { display: flex; align-items: center; gap: 0.5rem; }
+
+        /* Sticky Control Bar */
+        .controls-bar {
+            background: white;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
         label { font-weight: 600; font-size: 0.9rem; color: #555; }
-        
-        #searchInput { padding: 10px 15px; border: 2px solid #ddd; border-radius: 25px; width: 200px; outline: none; font-size: 0.95rem; }
+
+        /* Inputs */
+        #searchInput {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            width: 200px;
+            outline: none;
+            font-size: 0.95rem;
+        }
         #searchInput:focus { border-color: var(--primary-color); }
-        select { padding: 10px; border-radius: 6px; border: 1px solid #ddd; font-size: 0.95rem; cursor: pointer; }
-        
-        button.action-btn { padding: 10px 20px; border-radius: 25px; background-color: #28a745; color: white; cursor: pointer; border: none; font-weight: bold; font-size: 0.95rem; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.1s; }
-        button.secondary-btn { background-color: #007bff; }
-        button.neutral-btn { background-color: #6c757d; }
+
+        select {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        button.action-btn {
+            padding: 10px 20px;
+            border-radius: 25px;
+            background-color: #28a745; /* Green for action */
+            color: white;
+            cursor: pointer;
+            border: none;
+            font-weight: bold;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+
+        button.secondary-btn {
+            background-color: #007bff;
+        }
+
+        button.neutral-btn {
+            background-color: #6c757d;
+        }
+
         button.action-btn:hover { transform: scale(1.05); filter: brightness(1.1); }
         button.action-btn:active { transform: scale(0.95); }
 
-        .container { max-width: 1600px; margin: 2rem auto; padding: 0 1rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-        .conference-card { background: var(--card-bg); border-radius: var(--border-radius); box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; height: 500px; border: 1px solid #e0e0e0; transition: box-shadow 0.2s; }
-        .conference-card:hover { box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-        .conference-header { padding: 0.8rem 1rem; color: white; display: flex; justify-content: space-between; align-items: center; border-radius: 8px 8px 0 0; cursor: context-menu; position: relative; }
-        .conference-name { font-weight: 700; font-size: 1rem; cursor: text; border-bottom: 1px dashed rgba(255,255,255,0.3); }
-        .conference-name:focus { outline: none; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px 5px; }
-        .team-count { background: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; }
-        .team-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex-grow: 1; background: #fdfdfd; min-height: 50px; }
-        .team-item { padding: 0.6rem 1rem; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; background: white; cursor: grab; transition: background 0.2s; }
+        /* Main Grid */
+        .container {
+            max-width: 1600px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .conference-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            border: 1px solid #e0e0e0;
+            transition: box-shadow 0.2s;
+        }
+
+        .conference-card:hover {
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .conference-header {
+            padding: 0.8rem 1rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px 8px 0 0;
+            cursor: context-menu; /* Hint that right click does something */
+            position: relative;
+        }
+
+        .conference-name { 
+            font-weight: 700; 
+            font-size: 1rem; 
+            cursor: text;
+            border-bottom: 1px dashed rgba(255,255,255,0.3);
+        }
+        
+        .conference-name:focus {
+            outline: none;
+            background: rgba(0,0,0,0.2);
+            border-radius: 4px;
+            padding: 2px 5px;
+        }
+        
+        .team-count {
+            background: rgba(0,0,0,0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .team-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            overflow-y: auto;
+            flex-grow: 1;
+            background: #fdfdfd;
+            min-height: 50px;
+        }
+
+        .team-item {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            cursor: grab;
+            transition: background 0.2s;
+        }
+        
         .team-item:hover { background: #f9fcff; }
         .team-item:active { cursor: grabbing; }
+
+        /* School Info */
         .school-info { display: flex; flex-direction: column; }
         .school-name { font-weight: 700; color: #222; font-size: 0.95rem; }
         .mascot-name { font-weight: 400; color: #666; font-size: 0.85rem;}
+
+        /* Draggable Visuals */
         .sortable-ghost { opacity: 0.4; background-color: #eef; border: 2px dashed #999; }
         .sortable-drag { opacity: 1; background: white; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transform: scale(1.02); }
         
-        #analysis-section { background: #fff; padding: 2rem 0; border-top: 1px solid #ddd; }
-        #map-container, #table-container { max-width: 1200px; margin: 0 auto 3rem auto; padding: 0 1rem; }
-        #map { height: 500px; width: 100%; border-radius: var(--border-radius); box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1; }
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: var(--border-radius); overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); font-size: 0.9rem; border: 1px solid #eee; }
+        /* Analysis Section */
+        #analysis-section {
+            background: #fff;
+            padding: 2rem 0;
+            border-top: 1px solid #ddd;
+        }
+
+        #map-container, #table-container {
+            max-width: 1200px;
+            margin: 0 auto 3rem auto;
+            padding: 0 1rem;
+        }
+        
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            font-size: 0.9rem;
+            border: 1px solid #eee;
+        }
+
         thead { background-color: var(--primary-color); color: white; }
         th, td { padding: 10px 15px; text-align: left; border-bottom: 1px solid #ddd; }
         tr:nth-child(even) { background-color: #f9f9f9; }
         .high-travel { color: #d32f2f; font-weight: bold; }
-        footer { text-align: center; padding: 2rem; color: #666; font-size: 0.9rem; background: #eee; }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-size: 0.9rem;
+            background: #eee;
+        }
         
-        .tooltip-hint { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; pointer-events: none; opacity: 0; transition: opacity 0.3s; white-space: nowrap; z-index: 10; }
-        .conference-header:hover .tooltip-hint { opacity: 1; }
+        /* Helper Tooltip */
+        .tooltip-hint {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        .conference-header:hover .tooltip-hint {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -131,6 +331,199 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 
 <script>
+    // --- DATA ---
+    const originalConferences = [
+        {
+            id: "aac", name: "American Athletic", color: "#002D72",
+            teams: [
+                { name: "Army", mascot: "Black Knights", lat: 41.387, lng: -73.964 },
+                { name: "Charlotte", mascot: "49ers", lat: 35.307, lng: -80.735 },
+                { name: "East Carolina", mascot: "Pirates", lat: 35.607, lng: -77.366 },
+                { name: "Florida Atlantic", mascot: "Owls", lat: 26.368, lng: -80.101 },
+                { name: "Memphis", mascot: "Tigers", lat: 35.119, lng: -89.937 },
+                { name: "Navy", mascot: "Midshipmen", lat: 38.981, lng: -76.490 },
+                { name: "North Texas", mascot: "Mean Green", lat: 33.208, lng: -97.153 },
+                { name: "Rice", mascot: "Owls", lat: 29.716, lng: -95.409 },
+                { name: "South Florida", mascot: "Bulls", lat: 28.058, lng: -82.413 },
+                { name: "Temple", mascot: "Owls", lat: 39.980, lng: -75.158 },
+                { name: "Tulane", mascot: "Green Wave", lat: 29.935, lng: -90.122 },
+                { name: "Tulsa", mascot: "Golden Hurricane", lat: 36.152, lng: -95.946 },
+                { name: "UAB", mascot: "Blazers", lat: 33.501, lng: -86.807 },
+                { name: "UTSA", mascot: "Roadrunners", lat: 29.582, lng: -98.619 }
+            ]
+        },
+        {
+            id: "acc", name: "ACC", color: "#013CA6",
+            teams: [
+                { name: "Boston College", mascot: "Eagles", lat: 42.335, lng: -71.168 },
+                { name: "California", mascot: "Golden Bears", lat: 37.871, lng: -122.250 },
+                { name: "Clemson", mascot: "Tigers", lat: 34.678, lng: -82.843 },
+                { name: "Duke", mascot: "Blue Devils", lat: 35.996, lng: -78.942 },
+                { name: "Florida State", mascot: "Seminoles", lat: 30.436, lng: -84.304 },
+                { name: "Georgia Tech", mascot: "Yellow Jackets", lat: 33.772, lng: -84.392 },
+                { name: "Louisville", mascot: "Cardinals", lat: 38.206, lng: -85.759 },
+                { name: "Miami", mascot: "Hurricanes", lat: 25.720, lng: -80.278 },
+                { name: "NC State", mascot: "Wolfpack", lat: 35.786, lng: -78.682 },
+                { name: "North Carolina", mascot: "Tar Heels", lat: 35.904, lng: -79.046 },
+                { name: "Pittsburgh", mascot: "Panthers", lat: 40.444, lng: -79.953 },
+                { name: "SMU", mascot: "Mustangs", lat: 32.842, lng: -96.782 },
+                { name: "Stanford", mascot: "Cardinal", lat: 37.426, lng: -122.164 },
+                { name: "Syracuse", mascot: "Orange", lat: 43.036, lng: -76.136 },
+                { name: "Virginia", mascot: "Cavaliers", lat: 38.031, lng: -78.513 },
+                { name: "Virginia Tech", mascot: "Hokies", lat: 37.228, lng: -80.423 },
+                { name: "Wake Forest", mascot: "Demon Deacons", lat: 36.135, lng: -80.279 }
+            ]
+        },
+        {
+            id: "big12", name: "Big 12", color: "#C41E3A",
+            teams: [
+                { name: "Arizona", mascot: "Wildcats", lat: 32.228, lng: -110.948 },
+                { name: "Arizona State", mascot: "Sun Devils", lat: 33.424, lng: -111.932 },
+                { name: "Baylor", mascot: "Bears", lat: 31.547, lng: -97.113 },
+                { name: "BYU", mascot: "Cougars", lat: 40.252, lng: -111.649 },
+                { name: "Cincinnati", mascot: "Bearcats", lat: 39.131, lng: -84.516 },
+                { name: "Colorado", mascot: "Buffaloes", lat: 40.009, lng: -105.267 },
+                { name: "Houston", mascot: "Cougars", lat: 29.719, lng: -95.341 },
+                { name: "Iowa State", mascot: "Cyclones", lat: 42.023, lng: -93.647 },
+                { name: "Kansas", mascot: "Jayhawks", lat: 38.956, lng: -95.247 },
+                { name: "Kansas State", mascot: "Wildcats", lat: 39.197, lng: -96.584 },
+                { name: "Oklahoma State", mascot: "Cowboys", lat: 36.125, lng: -97.066 },
+                { name: "TCU", mascot: "Horned Frogs", lat: 32.709, lng: -97.368 },
+                { name: "Texas Tech", mascot: "Red Raiders", lat: 33.585, lng: -101.879 },
+                { name: "UCF", mascot: "Knights", lat: 28.608, lng: -81.196 },
+                { name: "Utah", mascot: "Utes", lat: 40.762, lng: -111.846 },
+                { name: "West Virginia", mascot: "Mountaineers", lat: 39.635, lng: -79.955 }
+            ]
+        },
+        {
+            id: "big10", name: "Big Ten", color: "#0088CE",
+            teams: [
+                { name: "Illinois", mascot: "Fighting Illini", lat: 40.099, lng: -88.235 },
+                { name: "Indiana", mascot: "Hoosiers", lat: 39.176, lng: -86.512 },
+                { name: "Iowa", mascot: "Hawkeyes", lat: 41.658, lng: -91.541 },
+                { name: "Maryland", mascot: "Terrapins", lat: 38.990, lng: -76.947 },
+                { name: "Michigan", mascot: "Wolverines", lat: 42.275, lng: -83.743 },
+                { name: "Michigan State", mascot: "Spartans", lat: 42.723, lng: -84.484 },
+                { name: "Minnesota", mascot: "Golden Gophers", lat: 44.976, lng: -93.228 },
+                { name: "Nebraska", mascot: "Cornhuskers", lat: 40.820, lng: -96.704 },
+                { name: "Northwestern", mascot: "Wildcats", lat: 42.058, lng: -87.676 },
+                { name: "Ohio State", mascot: "Buckeyes", lat: 40.001, lng: -83.019 },
+                { name: "Oregon", mascot: "Ducks", lat: 44.044, lng: -123.067 },
+                { name: "Penn State", mascot: "Nittany Lions", lat: 40.801, lng: -77.859 },
+                { name: "Purdue", mascot: "Boilermakers", lat: 40.428, lng: -86.913 },
+                { name: "Rutgers", mascot: "Scarlet Knights", lat: 40.500, lng: -74.447 },
+                { name: "UCLA", mascot: "Bruins", lat: 34.070, lng: -118.445 },
+                { name: "USC", mascot: "Trojans", lat: 34.021, lng: -118.286 },
+                { name: "Washington", mascot: "Huskies", lat: 47.656, lng: -122.306 },
+                { name: "Wisconsin", mascot: "Badgers", lat: 43.070, lng: -89.412 }
+            ]
+        },
+        {
+            id: "cusa", name: "Conference USA", color: "#CC0000",
+            teams: [
+                { name: "FIU", mascot: "Panthers", lat: 25.753, lng: -80.375 },
+                { name: "Jacksonville State", mascot: "Gamecocks", lat: 33.822, lng: -85.766 },
+                { name: "Kennesaw State", mascot: "Owls", lat: 34.037, lng: -84.583 },
+                { name: "Liberty", mascot: "Flames", lat: 37.351, lng: -79.183 },
+                { name: "Louisiana Tech", mascot: "Bulldogs", lat: 32.531, lng: -92.650 },
+                { name: "Middle Tennessee", mascot: "Blue Raiders", lat: 35.847, lng: -86.366 },
+                { name: "New Mexico State", mascot: "Aggies", lat: 32.279, lng: -106.746 },
+                { name: "Sam Houston", mascot: "Bearkats", lat: 30.713, lng: -95.546 },
+                { name: "UTEP", mascot: "Miners", lat: 31.773, lng: -106.505 },
+                { name: "Western Kentucky", mascot: "Hilltoppers", lat: 36.984, lng: -86.456 }
+            ]
+        },
+        {
+            id: "mac", name: "MAC", color: "#006747",
+            teams: [
+                { name: "Akron", mascot: "Zips", lat: 41.070, lng: -81.512 },
+                { name: "Ball State", mascot: "Cardinals", lat: 40.203, lng: -85.409 },
+                { name: "Bowling Green", mascot: "Falcons", lat: 41.377, lng: -83.623 },
+                { name: "Buffalo", mascot: "Bulls", lat: 42.999, lng: -78.786 },
+                { name: "Central Michigan", mascot: "Chippewas", lat: 43.580, lng: -84.777 },
+                { name: "Eastern Michigan", mascot: "Eagles", lat: 42.251, lng: -83.624 },
+                { name: "Kent State", mascot: "Golden Flashes", lat: 41.144, lng: -81.339 },
+                { name: "Miami (OH)", mascot: "RedHawks", lat: 39.511, lng: -84.733 },
+                { name: "Northern Illinois", mascot: "Huskies", lat: 41.933, lng: -88.775 },
+                { name: "Ohio", mascot: "Bobcats", lat: 39.324, lng: -82.099 },
+                { name: "Toledo", mascot: "Rockets", lat: 41.657, lng: -83.613 },
+                { name: "Western Michigan", mascot: "Broncos", lat: 42.282, lng: -85.613 }
+            ]
+        },
+        {
+            id: "mwc", name: "Mountain West", color: "#6D2C91",
+            teams: [
+                { name: "Air Force", mascot: "Falcons", lat: 38.996, lng: -104.843 },
+                { name: "Boise State", mascot: "Broncos", lat: 43.602, lng: -116.196 },
+                { name: "Colorado State", mascot: "Rams", lat: 40.573, lng: -105.083 },
+                { name: "Fresno State", mascot: "Bulldogs", lat: 36.812, lng: -119.750 },
+                { name: "Hawaii", mascot: "Rainbow Warriors", lat: 21.298, lng: -157.817 },
+                { name: "Nevada", mascot: "Wolf Pack", lat: 39.546, lng: -119.816 },
+                { name: "New Mexico", mascot: "Lobos", lat: 35.084, lng: -106.619 },
+                { name: "San Diego State", mascot: "Aztecs", lat: 32.775, lng: -117.071 },
+                { name: "San Jose State", mascot: "Spartans", lat: 37.335, lng: -121.881 },
+                { name: "UNLV", mascot: "Rebels", lat: 36.107, lng: -115.143 },
+                { name: "Utah State", mascot: "Aggies", lat: 41.745, lng: -111.809 },
+                { name: "Wyoming", mascot: "Cowboys", lat: 41.312, lng: -105.577 }
+            ]
+        },
+        {
+            id: "pac12", name: "Pac-12", color: "#000000",
+            teams: [
+                { name: "Oregon State", mascot: "Beavers", lat: 44.563, lng: -123.283 },
+                { name: "Washington State", mascot: "Cougars", lat: 46.731, lng: -117.156 }
+            ]
+        },
+        {
+            id: "sec", name: "SEC", color: "#FFD700",
+            teams: [
+                { name: "Alabama", mascot: "Crimson Tide", lat: 33.209, lng: -87.545 },
+                { name: "Arkansas", mascot: "Razorbacks", lat: 36.068, lng: -94.175 },
+                { name: "Auburn", mascot: "Tigers", lat: 32.602, lng: -85.491 },
+                { name: "Florida", mascot: "Gators", lat: 29.643, lng: -82.355 },
+                { name: "Georgia", mascot: "Bulldogs", lat: 33.948, lng: -83.373 },
+                { name: "Kentucky", mascot: "Wildcats", lat: 38.029, lng: -84.505 },
+                { name: "LSU", mascot: "Tigers", lat: 30.412, lng: -91.185 },
+                { name: "Mississippi State", mascot: "Bulldogs", lat: 33.454, lng: -88.794 },
+                { name: "Missouri", mascot: "Tigers", lat: 38.935, lng: -92.328 },
+                { name: "Oklahoma", mascot: "Sooners", lat: 35.202, lng: -97.442 },
+                { name: "Ole Miss", mascot: "Rebels", lat: 34.364, lng: -89.526 },
+                { name: "South Carolina", mascot: "Gamecocks", lat: 33.993, lng: -81.026 },
+                { name: "Tennessee", mascot: "Volunteers", lat: 35.955, lng: -83.925 },
+                { name: "Texas", mascot: "Longhorns", lat: 30.283, lng: -97.732 },
+                { name: "Texas A&M", mascot: "Aggies", lat: 30.610, lng: -96.340 },
+                { name: "Vanderbilt", mascot: "Commodores", lat: 36.143, lng: -86.804 }
+            ]
+        },
+        {
+            id: "sunbelt", name: "Sun Belt", color: "#F4A01C",
+            teams: [
+                { name: "Appalachian State", mascot: "Mountaineers", lat: 36.211, lng: -81.685 },
+                { name: "Arkansas State", mascot: "Red Wolves", lat: 35.848, lng: -90.675 },
+                { name: "Coastal Carolina", mascot: "Chanticleers", lat: 33.793, lng: -79.012 },
+                { name: "Georgia Southern", mascot: "Eagles", lat: 32.421, lng: -81.786 },
+                { name: "Georgia State", mascot: "Panthers", lat: 33.753, lng: -84.385 },
+                { name: "James Madison", mascot: "Dukes", lat: 38.435, lng: -78.875 },
+                { name: "Louisiana", mascot: "Ragin' Cajuns", lat: 30.211, lng: -92.019 },
+                { name: "Marshall", mascot: "Thundering Herd", lat: 38.423, lng: -82.425 },
+                { name: "Old Dominion", mascot: "Monarchs", lat: 36.885, lng: -76.305 },
+                { name: "South Alabama", mascot: "Jaguars", lat: 30.694, lng: -88.190 },
+                { name: "Southern Miss", mascot: "Golden Eagles", lat: 31.329, lng: -89.333 },
+                { name: "Texas State", mascot: "Bobcats", lat: 29.889, lng: -97.938 },
+                { name: "Troy", mascot: "Trojans", lat: 31.800, lng: -85.957 },
+                { name: "ULM", mascot: "Warhawks", lat: 32.531, lng: -92.066 }
+            ]
+        },
+        {
+            id: "ind", name: "Independents", color: "#666666",
+            teams: [
+                { name: "Notre Dame", mascot: "Fighting Irish", lat: 41.703, lng: -86.239 },
+                { name: "UConn", mascot: "Huskies", lat: 41.808, lng: -72.249 },
+                { name: "UMass", mascot: "Minutemen", lat: 42.386, lng: -72.529 }
+            ]
+        }
+    ];
+
     let map;
     let markersLayer;
     let legendControl;
@@ -138,8 +531,9 @@
     // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
         initMap();
-        // Load the default "current" alignment from the JSON file
-        loadScenario('current');
+        // Load default current alignment into builder
+        renderBuilderView(JSON.parse(JSON.stringify(originalConferences)));
+        analyzeBuilder();
     });
 
     // --- RENDER BUILDER ---
@@ -152,6 +546,7 @@
         });
     }
 
+    // New Helper to create a single card
     function createConferenceCard(conf, container) {
         const card = document.createElement('div');
         card.className = 'conference-card';
@@ -167,11 +562,12 @@
             <ul class="team-list" id="list-${conf.id}"></ul>
         `;
         
+        // Add Teams
         const list = card.querySelector('.team-list');
         conf.teams.forEach(team => {
             const li = document.createElement('li');
             li.className = 'team-item';
-            li.dataset.team = JSON.stringify(team); 
+            li.dataset.team = JSON.stringify(team); // Safe Storage
             li.innerHTML = `
                 <div class="school-info">
                     <span class="school-name">${team.name}</span>
@@ -183,28 +579,51 @@
 
         container.appendChild(card);
 
-        // Events
+        // Setup Right Click for Color
         const header = card.querySelector('.conference-header');
         const picker = card.querySelector('.color-picker');
-        header.addEventListener('contextmenu', (e) => { e.preventDefault(); picker.click(); });
-        picker.addEventListener('input', (e) => { header.style.backgroundColor = e.target.value; });
-        picker.addEventListener('change', (e) => { analyzeBuilder(); });
         
+        header.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            picker.click();
+        });
+
+        picker.addEventListener('input', (e) => {
+            header.style.backgroundColor = e.target.value;
+        });
+
+        picker.addEventListener('change', (e) => {
+             analyzeBuilder(); // Update map after color selection is finalized
+        });
+        
+        // Setup Sortable
         new Sortable(list, {
             group: 'conferences',
             animation: 150,
             ghostClass: 'sortable-ghost',
             dragClass: 'sortable-drag',
-            onEnd: function () { updateCounts(); }
+            onEnd: function () {
+                updateCounts();
+            }
         });
     }
 
+    // --- ADD NEW CONFERENCE ---
     function addNewConference() {
         const grid = document.getElementById('builderGrid');
         const id = 'custom-' + Date.now();
+        // Generate random color
         const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
-        const newConf = { id: id, name: "New Conference", color: randomColor, teams: [] };
+        
+        const newConf = {
+            id: id,
+            name: "New Conference",
+            color: randomColor,
+            teams: []
+        };
+        
         createConferenceCard(newConf, grid);
+        // Scroll to the bottom
         window.scrollTo(0, document.body.scrollHeight);
     }
 
@@ -216,6 +635,7 @@
         });
     }
 
+    // --- SEARCH FILTER ---
     function filterTeams() {
         const input = document.getElementById('searchInput');
         const filter = input.value.toUpperCase();
@@ -226,7 +646,7 @@
             items.forEach(item => {
                 const text = item.innerText;
                 if (text.toUpperCase().indexOf(filter) > -1) {
-                    item.style.display = ""; 
+                    item.style.display = ""; // Default display
                 } else {
                     item.style.display = "none";
                 }
@@ -234,73 +654,133 @@
         });
     }
 
-    // --- REFRACTORED: LOAD SCENARIO FROM JSON ---
+    // --- SCENARIO LOADER ---
     function loadScenario(type) {
-        const filename = `presets/${type}.json`;
+        let newData = JSON.parse(JSON.stringify(originalConferences));
         
-        fetch(filename)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Could not load preset: ${filename}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                renderBuilderView(data);
-                analyzeBuilder();
-                document.getElementById('searchInput').value = '';
-            })
-            .catch(error => {
-                console.error("Error loading scenario:", error);
-                alert("Error loading preset. Make sure you are running a local server (not opening the file directly) and that the presets folder exists.");
+        if (type === 'geographic') {
+            const west = { id: 'west', name: 'West League', color: '#ff0000', teams: [] };
+            const mid = { id: 'mid', name: 'Central League', color: '#00ff00', teams: [] };
+            const east = { id: 'east', name: 'East League', color: '#0000ff', teams: [] };
+            
+            let allTeams = [];
+            newData.forEach(c => allTeams.push(...c.teams));
+            allTeams.forEach(t => {
+                if (t.lng < -104) west.teams.push(t);
+                else if (t.lng < -87) mid.teams.push(t);
+                else east.teams.push(t);
             });
+            newData = [west, mid, east];
+        } 
+        else if (type === 'pac12return') {
+            const pac12 = newData.find(c => c.id === 'pac12');
+            const moveBack = ["Oregon", "Washington", "USC", "UCLA", "California", "Stanford", "Utah", "Arizona", "Arizona State", "Colorado"];
+            newData.forEach(conf => {
+                if(conf.id === 'pac12') return;
+                const remaining = [];
+                conf.teams.forEach(t => {
+                    if(moveBack.includes(t.name)) pac12.teams.push(t);
+                    else remaining.push(t);
+                });
+                conf.teams = remaining;
+            });
+        }
+        else if (type === 'superleague') {
+             const super1 = { id: 's1', name: 'Super League A', color: '#D4AF37', teams: [] };
+             const super2 = { id: 's2', name: 'Super League B', color: '#C0C0C0', teams: [] };
+             const lower = { id: 'rem', name: 'Development League', color: '#555555', teams: [] };
+             let allTeams = [];
+             newData.forEach(c => allTeams.push(...c.teams));
+             allTeams.forEach((t, i) => {
+                 if (i < 32) super1.teams.push(t);
+                 else if (i < 64) super2.teams.push(t);
+                 else lower.teams.push(t);
+             });
+             newData = [super1, super2, lower];
+        } else if (type === 'current') {
+            // Explicitly handle reset
+            renderBuilderView(newData);
+            analyzeBuilder();
+            return;
+        }
+
+        renderBuilderView(newData);
+        analyzeBuilder();
+        
+        // Reset Search
+        document.getElementById('searchInput').value = '';
     }
 
     // --- IMPORT / EXPORT LOGIC ---
-    function triggerImport() { document.getElementById('importInput').click(); }
+    function triggerImport() {
+        document.getElementById('importInput').click();
+    }
 
     function importAlignment(input) {
         if (!input.files || !input.files[0]) return;
+        
         const file = input.files[0];
         const reader = new FileReader();
+
         reader.onload = function(e) {
             try {
                 const json = JSON.parse(e.target.result);
+                // Validate basic structure
                 if (Array.isArray(json) && json.length > 0 && json[0].teams) {
                     renderBuilderView(json);
                     analyzeBuilder();
+                    // Reset selection so the same file can be selected again if needed
                     input.value = '';
+                    alert('Alignment loaded successfully!');
                 } else {
-                    alert('Invalid JSON format.');
+                    alert('Invalid JSON format: Missing conference array or team data.');
                 }
             } catch (err) {
                 console.error(err);
                 alert('Error parsing JSON file.');
             }
         };
+
         reader.readAsText(file);
     }
 
     function exportAlignment() {
         const cards = document.querySelectorAll('.conference-card');
         let exportData = [];
+
         cards.forEach(card => {
+            const header = card.querySelector('.conference-header');
             const name = card.querySelector('.conference-name').innerText;
             const id = card.dataset.confId || 'conf-' + Math.floor(Math.random() * 10000);
-            const color = card.querySelector('.color-picker').value; 
-            let confObj = { id: id, name: name, color: color, teams: [] };
+            
+            // Get color from the input value to ensure hex format, or fall back to computed style
+            const colorInput = card.querySelector('.color-picker');
+            const color = colorInput.value; 
+
+            let confObj = {
+                id: id,
+                name: name,
+                color: color,
+                teams: []
+            };
+
             const items = card.querySelectorAll('.team-item');
             items.forEach(item => {
-                if (item.dataset.team) confObj.teams.push(JSON.parse(item.dataset.team));
+                if (item.dataset.team) {
+                    confObj.teams.push(JSON.parse(item.dataset.team));
+                }
             });
-            if (confObj.teams.length > 0) exportData.push(confObj);
+
+            if (confObj.teams.length > 0) {
+                exportData.push(confObj);
+            }
         });
 
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
         const downloadAnchorNode = document.createElement('a');
         downloadAnchorNode.setAttribute("href", dataStr);
         downloadAnchorNode.setAttribute("download", "conference_alignment.json");
-        document.body.appendChild(downloadAnchorNode);
+        document.body.appendChild(downloadAnchorNode); // required for firefox
         downloadAnchorNode.click();
         downloadAnchorNode.remove();
     }
@@ -310,20 +790,31 @@
         try {
             const cards = document.querySelectorAll('.conference-card');
             let builtData = [];
+            
             cards.forEach(card => {
                 const name = card.querySelector('.conference-name').innerText;
+                // For map coloring, computed style is fine
                 const header = card.querySelector('.conference-header');
                 const color = window.getComputedStyle(header).backgroundColor;
+                
                 let newConf = { name: name, color: color, teams: [] };
+
                 const items = card.querySelectorAll('.team-item');
                 items.forEach(item => {
-                    if (item.dataset.team) newConf.teams.push(JSON.parse(item.dataset.team));
+                    if (item.dataset.team) {
+                        const teamData = JSON.parse(item.dataset.team);
+                        newConf.teams.push(teamData);
+                    }
                 });
+
                 if(newConf.teams.length > 0) builtData.push(newConf);
             });
+
             updateMap(builtData);
             generateTravelData(builtData);
-        } catch (e) { console.error("Analysis Error", e); }
+        } catch (e) {
+            console.error("Analysis Error", e);
+        }
     }
 
     // --- MAP & MATH ---
@@ -338,6 +829,7 @@
     function updateMap(data) {
         markersLayer.clearLayers();
         if (legendControl) map.removeControl(legendControl);
+
         data.forEach(conf => {
             conf.teams.forEach(team => {
                 const marker = L.circleMarker([team.lat, team.lng], {
@@ -382,9 +874,12 @@
                         count++;
                     }
                 });
-                allTeamData.push({ name: team.name, conf: conf.name, avg: count > 0 ? (totalDist / count) : 0 });
+                allTeamData.push({
+                    name: team.name, conf: conf.name, avg: count > 0 ? (totalDist / count) : 0
+                });
             });
         });
+
         allTeamData.sort((a, b) => b.avg - a.avg);
         const tbody = document.getElementById('travelBody');
         tbody.innerHTML = '';
