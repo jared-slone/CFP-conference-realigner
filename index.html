@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FBS Conference Builder</title>
+    <title>FBS Conference Architect</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     
@@ -14,6 +14,7 @@
             --text-color: #333;
             --card-bg: #fff;
             --border-radius: 8px;
+            --header-height: 140px;
         }
 
         body {
@@ -24,107 +25,82 @@
             padding: 0;
         }
 
+        /* Header Area */
         header {
             background-color: var(--primary-color);
             color: white;
-            padding: 1.5rem 1rem;
+            padding: 1rem;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        h1 { margin: 0; font-size: 2.2rem; }
-        p.subtitle { opacity: 0.9; margin-top: 0.5rem; }
+        h1 { margin: 0; font-size: 1.8rem; }
+        p.subtitle { opacity: 0.8; margin: 0.2rem 0 0 0; font-size: 0.9rem; }
 
-        /* TAB NAVIGATION */
-        .tab-nav {
-            display: flex;
-            justify-content: center;
+        /* Sticky Control Bar */
+        .controls-bar {
             background: white;
             padding: 1rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 2rem;
             position: sticky;
             top: 0;
             z-index: 1000;
-        }
-
-        .tab-btn {
-            padding: 10px 25px;
-            margin: 0 10px;
-            border: none;
-            background: #eee;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .tab-btn.active {
-            background: var(--primary-color);
-            color: white;
-            transform: scale(1.05);
-        }
-
-        .view-section { display: none; }
-        .view-section.active { display: block; }
-
-        /* Builder Controls */
-        .builder-controls {
-            max-width: 1200px;
-            margin: 0 auto 2rem auto;
-            padding: 1rem;
-            background: white;
-            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             display: flex;
-            gap: 1rem;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
             flex-wrap: wrap;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
-        select, button.action-btn {
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        label { font-weight: 600; font-size: 0.9rem; color: #555; }
+
+        /* Inputs */
+        #searchInput {
             padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            width: 250px;
+            outline: none;
+            font-size: 0.95rem;
+        }
+        #searchInput:focus { border-color: var(--primary-color); }
+
+        select {
+            padding: 10px;
             border-radius: 6px;
             border: 1px solid #ddd;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            cursor: pointer;
         }
 
         button.action-btn {
-            background-color: var(--primary-color);
+            padding: 10px 20px;
+            border-radius: 25px;
+            background-color: #28a745; /* Green for action */
             color: white;
             cursor: pointer;
             border: none;
             font-weight: bold;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
         }
 
-        button.action-btn:hover { background-color: #003366; }
+        button.action-btn:hover { transform: scale(1.05); background-color: #218838; }
+        button.action-btn:active { transform: scale(0.95); }
 
-        /* Search & Grid */
-        .search-container {
-            max-width: 600px;
-            margin: 0 auto 2rem auto;
-            padding: 0 1rem;
-        }
-
-        #searchInput {
-            width: 100%;
-            padding: 1rem;
-            font-size: 1.1rem;
-            border: 2px solid #ddd;
-            border-radius: 50px;
-            outline: none;
-            box-sizing: border-box;
-        }
-        #searchInput:focus { border-color: var(--primary-color); }
-
+        /* Main Grid */
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 1rem 1rem 1rem;
+            max-width: 1600px;
+            margin: 2rem auto;
+            padding: 0 1rem;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.5rem;
         }
 
@@ -135,10 +111,11 @@
             display: flex;
             flex-direction: column;
             height: 500px;
+            border: 1px solid #e0e0e0;
         }
 
         .conference-header {
-            padding: 1rem;
+            padding: 0.8rem 1rem;
             color: white;
             display: flex;
             justify-content: space-between;
@@ -146,8 +123,15 @@
             border-radius: 8px 8px 0 0;
         }
 
-        .conference-name { font-weight: 700; font-size: 1.1rem; }
+        .conference-name { font-weight: 700; font-size: 1rem; }
         
+        .team-count {
+            background: rgba(0,0,0,0.2);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
         .team-list {
             list-style: none;
             padding: 0;
@@ -155,37 +139,42 @@
             overflow-y: auto;
             flex-grow: 1;
             background: #fdfdfd;
-            min-height: 50px; /* Ensure drop zone exists even if empty */
+            min-height: 50px;
         }
 
         .team-item {
-            padding: 0.8rem 1rem;
+            padding: 0.6rem 1rem;
             border-bottom: 1px solid #f0f0f0;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             background: white;
             cursor: grab;
+            transition: background 0.2s;
         }
         
+        .team-item:hover { background: #f9fcff; }
         .team-item:active { cursor: grabbing; }
 
-        /* Draggable Styles */
-        .sortable-ghost {
-            opacity: 0.4;
-            background-color: #eef;
-            border: 2px dashed #999;
-        }
-        
-        .sortable-drag { opacity: 1; background: white; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-
+        /* School Info */
         .school-info { display: flex; flex-direction: column; }
-        .school-name { font-weight: 700; color: #222; }
-        .mascot-name { font-weight: 400; color: #666; font-size: 0.9em;}
+        .school-name { font-weight: 700; color: #222; font-size: 0.95rem; }
+        .mascot-name { font-weight: 400; color: #666; font-size: 0.85rem;}
+
+        /* Draggable Visuals */
+        .sortable-ghost { opacity: 0.4; background-color: #eef; border: 2px dashed #999; }
+        .sortable-drag { opacity: 1; background: white; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transform: scale(1.02); }
         
-        /* Map & Table */
+        /* Analysis Section */
+        #analysis-section {
+            background: #fff;
+            padding: 2rem 0;
+            border-top: 1px solid #ddd;
+        }
+
         #map-container, #table-container {
             max-width: 1200px;
-            margin: 2rem auto;
+            margin: 0 auto 3rem auto;
             padding: 0 1rem;
         }
         
@@ -197,7 +186,7 @@
             z-index: 1;
         }
 
-        /* Table Styles */
+        /* Table */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -205,11 +194,12 @@
             border-radius: var(--border-radius);
             overflow: hidden;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            border: 1px solid #eee;
         }
 
         thead { background-color: var(--primary-color); color: white; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; }
+        th, td { padding: 10px 15px; text-align: left; border-bottom: 1px solid #ddd; }
         tr:nth-child(even) { background-color: #f9f9f9; }
         .high-travel { color: #d32f2f; font-weight: bold; }
 
@@ -218,8 +208,7 @@
             padding: 2rem;
             color: #666;
             font-size: 0.9rem;
-            border-top: 1px solid #ddd;
-            margin-top: 2rem;
+            background: #eee;
         }
     </style>
 </head>
@@ -227,37 +216,30 @@
 
 <header>
     <h1>FBS Conference Architect</h1>
-    <p class="subtitle">Drag & Drop Realignment Tool</p>
+    <p class="subtitle">Drag teams to realign conferences, then analyze the travel impact.</p>
 </header>
 
-<div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('view-current')">Current Alignment</button>
-    <button class="tab-btn" onclick="switchTab('view-builder')">Conference Lab (Builder)</button>
-</div>
-
-<div id="view-current" class="view-section active">
-    <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Search for school or mascot..." onkeyup="filterTeams()">
+<div class="controls-bar">
+    <div class="control-group">
+        <input type="text" id="searchInput" placeholder="🔍 Find team..." onkeyup="filterTeams()">
     </div>
-    <div class="container" id="currentGrid"></div>
-</div>
+    
+    <div class="control-group">
+        <label>Scenario:</label>
+        <select id="scenarioSelect" onchange="loadScenario(this.value)">
+            <option value="current">Current Alignment (Reset)</option>
+            <option value="geographic">Strict Geographic (East/Mid/West)</option>
+            <option value="pac12return">Return of the Pac-12</option>
+            <option value="superleague">2 Super Leagues (Power 2)</option>
+        </select>
+    </div>
 
-<div id="view-builder" class="view-section">
-    <div class="builder-controls">
-        <div style="display:flex; align-items:center; gap:10px;">
-            <label><strong>Load Scenario:</strong></label>
-            <select id="scenarioSelect" onchange="loadScenario(this.value)">
-                <option value="current">Current Alignment (Reset)</option>
-                <option value="geographic">Strict Geographic (East/Mid/West)</option>
-                <option value="pac12return">Return of the Pac-12</option>
-                <option value="superleague">2 Super Leagues (Power 2)</option>
-            </select>
-        </div>
-        
+    <div class="control-group">
         <button class="action-btn" onclick="analyzeBuilder()">📊 Update Map & Stats</button>
     </div>
-    <div class="container" id="builderGrid"></div>
 </div>
+
+<div class="container" id="builderGrid"></div>
 
 <div id="analysis-section">
     <div id="map-container">
@@ -268,7 +250,7 @@
     <div id="table-container">
         <h2 style="margin-bottom: 0.5rem; color: var(--primary-color);">Projected Travel Burden</h2>
         <p style="margin-bottom: 1.5rem; color: #666; font-size: 0.9rem;">
-            <i>Distances are updated based on the teams currently inside the conference boxes above.</i>
+            <i>Calculated based on the average distance between a team and all other teams currently in their conference box.</i>
         </p>
         <div style="overflow-x: auto;">
             <table id="travelTable">
@@ -277,7 +259,7 @@
                         <th>Rank</th>
                         <th>Team</th>
                         <th>Conference</th>
-                        <th>Avg. Distance to Opponents (Miles)</th>
+                        <th>Avg. Distance (Miles)</th>
                     </tr>
                 </thead>
                 <tbody id="travelBody"></tbody>
@@ -294,10 +276,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
 
 <script>
-    // --- MASTER DATA ---
+    // --- DATA ---
     const originalConferences = [
         {
-            id: "aac", name: "American Athletic (AAC)", color: "#002D72",
+            id: "aac", name: "American Athletic", color: "#002D72",
             teams: [
                 { name: "Army", mascot: "Black Knights", lat: 41.387, lng: -73.964 },
                 { name: "Charlotte", mascot: "49ers", lat: 35.307, lng: -80.735 },
@@ -316,7 +298,7 @@
             ]
         },
         {
-            id: "acc", name: "Atlantic Coast (ACC)", color: "#013CA6",
+            id: "acc", name: "ACC", color: "#013CA6",
             teams: [
                 { name: "Boston College", mascot: "Eagles", lat: 42.335, lng: -71.168 },
                 { name: "California", mascot: "Golden Bears", lat: 37.871, lng: -122.250 },
@@ -494,63 +476,12 @@
     // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
         initMap();
-        renderCurrentView();
+        // Load default current alignment into builder
         renderBuilderView(JSON.parse(JSON.stringify(originalConferences)));
-        // Analyze once to set map to default state
         analyzeBuilder();
     });
 
-    // --- TAB LOGIC ---
-    function switchTab(viewId) {
-        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
-        
-        const btnIndex = viewId === 'view-current' ? 0 : 1;
-        document.querySelectorAll('.tab-btn')[btnIndex].classList.add('active');
-
-        // Logic split:
-        // If Current View: Show standard data
-        // If Builder View: Run analyze to show whatever is currently in the boxes
-        if(viewId === 'view-current') {
-            updateAnalysis(originalConferences);
-        } else {
-            analyzeBuilder();
-        }
-        
-        setTimeout(() => map.invalidateSize(), 100);
-    }
-
-    // --- VIEW 1: CURRENT ALIGNMENT ---
-    function renderCurrentView() {
-        const grid = document.getElementById('currentGrid');
-        grid.innerHTML = '';
-        originalConferences.forEach(conf => {
-            conf.teams.sort((a, b) => a.name.localeCompare(b.name));
-            // Just for display, not drag
-            const card = document.createElement('div');
-            card.className = 'conference-card';
-            card.innerHTML = `
-                <div class="conference-header" style="background-color: ${conf.color};">
-                    <span class="conference-name">${conf.name}</span>
-                    <span class="team-count">${conf.teams.length}</span>
-                </div>
-                <ul class="team-list">
-                    ${conf.teams.map(team => `
-                        <li class="team-item">
-                            <div class="school-info">
-                                <span class="school-name">${team.name}</span>
-                                <span class="mascot-name">${team.mascot}</span>
-                            </div>
-                        </li>
-                    `).join('')}
-                </ul>
-            `;
-            grid.appendChild(card);
-        });
-    }
-
-    // --- VIEW 2: BUILDER & SCENARIOS ---
+    // --- RENDER BUILDER ---
     function renderBuilderView(data) {
         const grid = document.getElementById('builderGrid');
         grid.innerHTML = '';
@@ -558,26 +489,22 @@
         data.forEach(conf => {
             const card = document.createElement('div');
             card.className = 'conference-card';
-            // We store ID for reference, but we will read color from style for truth
             card.dataset.confId = conf.id;
             
-            // Header
             card.innerHTML = `
                 <div class="conference-header" style="background-color: ${conf.color};">
                     <span class="conference-name">${conf.name}</span>
                     <span class="team-count">${conf.teams.length}</span>
                 </div>
-                <ul class="team-list" id="builder-list-${conf.id}"></ul>
+                <ul class="team-list" id="list-${conf.id}"></ul>
             `;
             
-            // Teams (Built via DOM to avoid quote escaping issues)
             const list = card.querySelector('.team-list');
+            
             conf.teams.forEach(team => {
                 const li = document.createElement('li');
                 li.className = 'team-item';
-                // Safe data assignment
-                li.dataset.team = JSON.stringify(team);
-                
+                li.dataset.team = JSON.stringify(team); // Safe Storage
                 li.innerHTML = `
                     <div class="school-info">
                         <span class="school-name">${team.name}</span>
@@ -589,28 +516,47 @@
 
             grid.appendChild(card);
             
-            // Enable Drag and Drop
+            // Init SortableJS
             new Sortable(list, {
                 group: 'conferences',
                 animation: 150,
                 ghostClass: 'sortable-ghost',
                 dragClass: 'sortable-drag',
                 onEnd: function () {
-                    // Update the visible numbers in headers immediately
-                    updateBuilderCounts();
+                    updateCounts();
                 }
             });
         });
     }
 
-    function updateBuilderCounts() {
-        const cards = document.querySelectorAll('#builderGrid .conference-card');
+    function updateCounts() {
+        const cards = document.querySelectorAll('.conference-card');
         cards.forEach(card => {
             const count = card.querySelectorAll('.team-item').length;
             card.querySelector('.team-count').innerText = count;
         });
     }
 
+    // --- SEARCH FILTER ---
+    function filterTeams() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toUpperCase();
+        const cards = document.querySelectorAll('.conference-card');
+
+        cards.forEach(card => {
+            const items = card.querySelectorAll('.team-item');
+            items.forEach(item => {
+                const text = item.innerText;
+                if (text.toUpperCase().indexOf(filter) > -1) {
+                    item.style.display = ""; // Default display
+                } else {
+                    item.style.display = "none";
+                }
+            });
+        });
+    }
+
+    // --- SCENARIO LOADER ---
     function loadScenario(type) {
         let newData = JSON.parse(JSON.stringify(originalConferences));
         
@@ -621,7 +567,6 @@
             
             let allTeams = [];
             newData.forEach(c => allTeams.push(...c.teams));
-            
             allTeams.forEach(t => {
                 if (t.lng < -104) west.teams.push(t);
                 else if (t.lng < -87) mid.teams.push(t);
@@ -632,7 +577,6 @@
         else if (type === 'pac12return') {
             const pac12 = newData.find(c => c.id === 'pac12');
             const moveBack = ["Oregon", "Washington", "USC", "UCLA", "California", "Stanford", "Utah", "Arizona", "Arizona State", "Colorado"];
-            
             newData.forEach(conf => {
                 if(conf.id === 'pac12') return;
                 const remaining = [];
@@ -647,7 +591,6 @@
              const super1 = { id: 's1', name: 'Super League A', color: '#D4AF37', teams: [] };
              const super2 = { id: 's2', name: 'Super League B', color: '#C0C0C0', teams: [] };
              const lower = { id: 'rem', name: 'Development League', color: '#555555', teams: [] };
-
              let allTeams = [];
              newData.forEach(c => allTeams.push(...c.teams));
              allTeams.forEach((t, i) => {
@@ -660,63 +603,49 @@
 
         renderBuilderView(newData);
         analyzeBuilder();
+        
+        // Reset Search
+        document.getElementById('searchInput').value = '';
     }
 
-    // --- CORE LOGIC: SCRAPE DOM TO BUILD DATA ---
+    // --- ANALYZE ---
     function analyzeBuilder() {
         try {
-            const grid = document.getElementById('builderGrid');
-            const cards = grid.querySelectorAll('.conference-card');
-            
+            const cards = document.querySelectorAll('.conference-card');
             let builtData = [];
             
             cards.forEach(card => {
-                // 1. Get Visual Properties from the Card Header
+                // Header scraping
                 const header = card.querySelector('.conference-header');
                 const name = card.querySelector('.conference-name').innerText;
                 const color = header.style.backgroundColor;
 
-                let newConf = {
-                    name: name,
-                    color: color, 
-                    teams: []
-                };
+                let newConf = { name: name, color: color, teams: [] };
 
-                // 2. Get Teams currently inside this card
+                // Team scraping
                 const items = card.querySelectorAll('.team-item');
                 items.forEach(item => {
-                    // This now safely reads the object, even if it has quotes
                     if (item.dataset.team) {
                         const teamData = JSON.parse(item.dataset.team);
-                        newConf.teams.push({
-                            name: teamData.name,
-                            mascot: teamData.mascot,
-                            lat: teamData.lat,
-                            lng: teamData.lng
-                        });
+                        newConf.teams.push(teamData);
                     }
                 });
 
                 if(newConf.teams.length > 0) builtData.push(newConf);
             });
 
-            updateAnalysis(builtData);
+            updateMap(builtData);
+            generateTravelData(builtData);
         } catch (e) {
-            console.error("Error analyzing builder:", e);
+            console.error("Analysis Error", e);
         }
     }
 
-    function updateAnalysis(data) {
-        updateMap(data);
-        generateTravelData(data);
-    }
-
-    // --- MAP & CALCULATION ---
+    // --- MAP & MATH ---
     function initMap() {
         map = L.map('map').setView([39.8283, -98.5795], 4);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap'
+            maxZoom: 19, attribution: '© OpenStreetMap'
         }).addTo(map);
         markersLayer = L.layerGroup().addTo(map);
     }
@@ -728,37 +657,19 @@
         data.forEach(conf => {
             conf.teams.forEach(team => {
                 const marker = L.circleMarker([team.lat, team.lng], {
-                    radius: 6,
-                    fillColor: conf.color, 
-                    color: "#fff",
-                    weight: 1,
-                    opacity: 1,
-                    fillOpacity: 0.8
+                    radius: 6, fillColor: conf.color, color: "#fff", weight: 1, opacity: 1, fillOpacity: 0.8
                 });
-                
-                marker.bindPopup(`
-                    <b>${team.name}</b><br>
-                    ${team.mascot}<br>
-                    <span style="color:${conf.color}; font-weight:bold;">${conf.name}</span>
-                `);
-                
+                marker.bindPopup(`<b>${team.name}</b><br>${team.mascot}<br><span style="color:${conf.color}; font-weight:bold;">${conf.name}</span>`);
                 marker.addTo(markersLayer);
             });
         });
 
-        // Legend
         legendControl = L.control({position: 'bottomright'});
-        legendControl.onAdd = function (map) {
+        legendControl.onAdd = function () {
             const div = L.DomUtil.create('div', 'legend');
-            div.style.background = 'white';
-            div.style.padding = '10px';
-            div.style.borderRadius = '5px';
-            div.style.boxShadow = '0 0 15px rgba(0,0,0,0.2)';
-            
+            div.style.background = 'white'; div.style.padding = '10px'; div.style.borderRadius = '5px';
             data.forEach(conf => {
-                div.innerHTML += 
-                    `<i style="background:${conf.color}; width:10px; height:10px; display:inline-block; margin-right:5px; border-radius:50%;"></i>` +
-                    `<span style="font-size:0.8rem;">${conf.name}</span><br>`;
+                div.innerHTML += `<i style="background:${conf.color}; width:10px; height:10px; display:inline-block; margin-right:5px; border-radius:50%;"></i><span style="font-size:0.8rem;">${conf.name}</span><br>`;
             });
             return div;
         };
@@ -770,71 +681,35 @@
         const R = 3958.8; 
         const dLat = deg2rad(lat2 - lat1); 
         const dLon = deg2rad(lon2 - lon1); 
-        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                  Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-        return R * c;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
     }
 
     function generateTravelData(data) {
         let allTeamData = [];
-
         data.forEach(conf => {
             if(conf.name.includes("Independents")) return;
-            
             conf.teams.forEach(team => {
-                let totalDist = 0;
-                let count = 0;
+                let totalDist = 0; let count = 0;
                 conf.teams.forEach(opponent => {
                     if (team.name !== opponent.name) {
                         totalDist += getDistanceInMiles(team.lat, team.lng, opponent.lat, opponent.lng);
                         count++;
                     }
                 });
-                const avgDist = count > 0 ? (totalDist / count) : 0;
                 allTeamData.push({
-                    name: team.name,
-                    conf: conf.name.split('(')[0].trim(),
-                    avg: avgDist
+                    name: team.name, conf: conf.name, avg: count > 0 ? (totalDist / count) : 0
                 });
             });
         });
 
         allTeamData.sort((a, b) => b.avg - a.avg);
-
         const tbody = document.getElementById('travelBody');
         tbody.innerHTML = '';
         allTeamData.forEach((data, index) => {
             const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${index + 1}</td>
-                <td class="school-name">${data.name}</td>
-                <td>${data.conf}</td>
-                <td class="${data.avg > 1200 ? 'high-travel' : ''}">${Math.round(data.avg).toLocaleString()}</td>
-            `;
+            row.innerHTML = `<td>${index + 1}</td><td class="school-name">${data.name}</td><td>${data.conf}</td><td class="${data.avg > 1200 ? 'high-travel' : ''}">${Math.round(data.avg).toLocaleString()}</td>`;
             tbody.appendChild(row);
-        });
-    }
-
-    // --- FILTER TEAMS (Read Only View) ---
-    function filterTeams() {
-        const input = document.getElementById('searchInput');
-        const filter = input.value.toUpperCase();
-        const cards = document.querySelectorAll('#currentGrid .conference-card');
-
-        cards.forEach(card => {
-            const items = card.querySelectorAll('.team-item');
-            let hasVisibleTeam = false;
-            items.forEach(item => {
-                const text = item.textContent || item.innerText;
-                if (text.toUpperCase().indexOf(filter) > -1) {
-                    item.style.display = "flex";
-                    hasVisibleTeam = true;
-                } else {
-                    item.style.display = "none";
-                }
-            });
-            card.style.display = hasVisibleTeam ? "flex" : "none";
         });
     }
 </script>
