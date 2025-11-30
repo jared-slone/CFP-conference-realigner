@@ -14,7 +14,6 @@
             --text-color: #333;
             --card-bg: #fff;
             --border-radius: 8px;
-            --accent-color: #e6f0fa;
         }
 
         body {
@@ -82,6 +81,7 @@
             align-items: center;
             justify-content: center;
             flex-wrap: wrap;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
         select, button.action-btn {
@@ -96,9 +96,10 @@
             color: white;
             cursor: pointer;
             border: none;
+            font-weight: bold;
         }
 
-        button.action-btn:hover { opacity: 0.9; }
+        button.action-btn:hover { background-color: #003366; }
 
         /* Search & Grid */
         .search-container {
@@ -119,7 +120,7 @@
         #searchInput:focus { border-color: var(--primary-color); }
 
         .container {
-            max-width: 1400px; /* Wider for builder */
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 1rem 1rem 1rem;
             display: grid;
@@ -133,7 +134,7 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
-            height: 500px; /* Fixed height for scrolling lists */
+            height: 500px;
         }
 
         .conference-header {
@@ -154,6 +155,7 @@
             overflow-y: auto;
             flex-grow: 1;
             background: #fdfdfd;
+            min-height: 50px; /* Ensure drop zone exists even if empty */
         }
 
         .team-item {
@@ -162,7 +164,7 @@
             display: flex;
             justify-content: space-between;
             background: white;
-            cursor: grab; /* Indicates draggable */
+            cursor: grab;
         }
         
         .team-item:active { cursor: grabbing; }
@@ -225,47 +227,48 @@
 
 <header>
     <h1>FBS Conference Architect</h1>
-    <p class="subtitle">Current Alignments & Custom Realignment Scenarios</p>
+    <p class="subtitle">Drag & Drop Realignment Tool</p>
 </header>
 
 <div class="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('view-current')">Current Alignment (2024)</button>
+    <button class="tab-btn active" onclick="switchTab('view-current')">Current Alignment</button>
     <button class="tab-btn" onclick="switchTab('view-builder')">Conference Lab (Builder)</button>
 </div>
 
 <div id="view-current" class="view-section active">
     <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Search for school or mascot in current alignment..." onkeyup="filterTeams()">
+        <input type="text" id="searchInput" placeholder="Search for school or mascot..." onkeyup="filterTeams()">
     </div>
     <div class="container" id="currentGrid"></div>
 </div>
 
 <div id="view-builder" class="view-section">
     <div class="builder-controls">
-        <label><strong>Proposed Scenarios:</strong></label>
-        <select id="scenarioSelect" onchange="loadScenario(this.value)">
-            <option value="current">Current Alignment (Reset)</option>
-            <option value="geographic">Strict Geographic (East/Mid/West)</option>
-            <option value="pac12return">Return of the Pac-12</option>
-            <option value="superleague">2 Super Leagues (Power 2)</option>
-        </select>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <label><strong>Load Scenario:</strong></label>
+            <select id="scenarioSelect" onchange="loadScenario(this.value)">
+                <option value="current">Current Alignment (Reset)</option>
+                <option value="geographic">Strict Geographic (East/Mid/West)</option>
+                <option value="pac12return">Return of the Pac-12</option>
+                <option value="superleague">2 Super Leagues (Power 2)</option>
+            </select>
+        </div>
         
-        <button class="action-btn" onclick="analyzeBuilder()">📊 Analyze & Update Map</button>
-        <span style="font-size: 0.85rem; color: #666; margin-left: 10px;">Drag teams to move them. Click "Analyze" to update stats.</span>
+        <button class="action-btn" onclick="analyzeBuilder()">📊 Update Map & Stats</button>
     </div>
     <div class="container" id="builderGrid"></div>
 </div>
 
 <div id="analysis-section">
     <div id="map-container">
-        <h2 style="margin-bottom: 1rem; color: var(--primary-color);">Team Locations</h2>
+        <h2 style="margin-bottom: 1rem; color: var(--primary-color);">Alignment Map</h2>
         <div id="map"></div>
     </div>
 
     <div id="table-container">
-        <h2 style="margin-bottom: 0.5rem; color: var(--primary-color);">Average Conference Travel Burden</h2>
+        <h2 style="margin-bottom: 0.5rem; color: var(--primary-color);">Projected Travel Burden</h2>
         <p style="margin-bottom: 1.5rem; color: #666; font-size: 0.9rem;">
-            <i>Calculated based on the currently active view (Current or Custom Alignment).</i>
+            <i>Distances are updated based on the teams currently inside the conference boxes above.</i>
         </p>
         <div style="overflow-x: auto;">
             <table id="travelTable">
@@ -292,7 +295,6 @@
 
 <script>
     // --- MASTER DATA ---
-    // Storing this separately so we can reset/manipulate it
     const originalConferences = [
         {
             id: "aac", name: "American Athletic (AAC)", color: "#002D72",
@@ -485,97 +487,106 @@
         }
     ];
 
-    // Global variables
     let map;
     let markersLayer;
     let legendControl;
-    let currentData = JSON.parse(JSON.stringify(originalConferences)); // Deep copy
 
     // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
         initMap();
         renderCurrentView();
-        renderBuilderView(currentData);
-        updateAnalysis(currentData);
+        renderBuilderView(JSON.parse(JSON.stringify(originalConferences)));
+        // Analyze once to set map to default state
+        analyzeBuilder();
     });
 
     // --- TAB LOGIC ---
     function switchTab(viewId) {
-        // Hide all views
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        
-        // Show selected
         document.getElementById(viewId).classList.add('active');
         
-        // Update Button State
         const btnIndex = viewId === 'view-current' ? 0 : 1;
         document.querySelectorAll('.tab-btn')[btnIndex].classList.add('active');
 
-        // Refresh Map/Analysis based on view
+        // Logic split:
+        // If Current View: Show standard data
+        // If Builder View: Run analyze to show whatever is currently in the boxes
         if(viewId === 'view-current') {
             updateAnalysis(originalConferences);
         } else {
-            analyzeBuilder(); // Update based on current builder state
+            analyzeBuilder();
         }
         
-        // Leaflet resize hack because map was hidden
         setTimeout(() => map.invalidateSize(), 100);
     }
 
-    // --- VIEW 1: CURRENT ALIGNMENT (READ ONLY) ---
+    // --- VIEW 1: CURRENT ALIGNMENT ---
     function renderCurrentView() {
         const grid = document.getElementById('currentGrid');
         grid.innerHTML = '';
         originalConferences.forEach(conf => {
             conf.teams.sort((a, b) => a.name.localeCompare(b.name));
-            const card = createConferenceCard(conf, false); // false = not draggable
+            // Just for display, not drag
+            const card = document.createElement('div');
+            card.className = 'conference-card';
+            card.innerHTML = `
+                <div class="conference-header" style="background-color: ${conf.color};">
+                    <span class="conference-name">${conf.name}</span>
+                    <span class="team-count">${conf.teams.length}</span>
+                </div>
+                <ul class="team-list">
+                    ${conf.teams.map(team => `
+                        <li class="team-item">
+                            <div class="school-info">
+                                <span class="school-name">${team.name}</span>
+                                <span class="mascot-name">${team.mascot}</span>
+                            </div>
+                        </li>
+                    `).join('')}
+                </ul>
+            `;
             grid.appendChild(card);
         });
     }
 
-    function createConferenceCard(conf, isDraggable) {
-        const card = document.createElement('div');
-        card.className = 'conference-card';
-        card.dataset.confId = conf.id;
-        
-        card.innerHTML = `
-            <div class="conference-header" style="background-color: ${conf.color};">
-                <span class="conference-name">${conf.name}</span>
-                <span class="team-count">${conf.teams.length}</span>
-            </div>
-            <ul class="team-list" id="list-${conf.id}">
-                ${conf.teams.map(team => `
-                    <li class="team-item" data-team='${JSON.stringify(team)}'>
-                        <div class="school-info">
-                            <span class="school-name">${team.name}</span>
-                            <span class="mascot-name">${team.mascot}</span>
-                        </div>
-                    </li>
-                `).join('')}
-            </ul>
-        `;
-        return card;
-    }
-
-    // --- VIEW 2: BUILDER (DRAG & DROP) ---
+    // --- VIEW 2: BUILDER & SCENARIOS ---
     function renderBuilderView(data) {
         const grid = document.getElementById('builderGrid');
         grid.innerHTML = '';
         
         data.forEach(conf => {
-            const card = createConferenceCard(conf, true);
+            const card = document.createElement('div');
+            card.className = 'conference-card';
+            // We store ID for reference, but we will read color from style for truth
+            card.dataset.confId = conf.id;
+            
+            card.innerHTML = `
+                <div class="conference-header" style="background-color: ${conf.color};">
+                    <span class="conference-name">${conf.name}</span>
+                    <span class="team-count">${conf.teams.length}</span>
+                </div>
+                <ul class="team-list" id="builder-list-${conf.id}">
+                    ${conf.teams.map(team => `
+                        <li class="team-item" data-team='${JSON.stringify(team)}'>
+                            <div class="school-info">
+                                <span class="school-name">${team.name}</span>
+                                <span class="mascot-name">${team.mascot}</span>
+                            </div>
+                        </li>
+                    `).join('')}
+                </ul>
+            `;
             grid.appendChild(card);
             
-            // Initialize Sortable on the UL
-            const listElement = card.querySelector('.team-list');
-            new Sortable(listElement, {
-                group: 'conferences', // Allows dragging between lists
+            // Enable Drag and Drop
+            new Sortable(card.querySelector('.team-list'), {
+                group: 'conferences',
                 animation: 150,
                 ghostClass: 'sortable-ghost',
                 dragClass: 'sortable-drag',
-                onEnd: function (evt) {
-                    // Update Counts visually
+                onEnd: function () {
+                    // Update the visible numbers in headers immediately
                     updateBuilderCounts();
                 }
             });
@@ -590,17 +601,14 @@
         });
     }
 
-    // --- SCENARIO LOGIC ---
     function loadScenario(type) {
-        let newData = JSON.parse(JSON.stringify(originalConferences)); // Start fresh
+        let newData = JSON.parse(JSON.stringify(originalConferences));
         
         if (type === 'geographic') {
-            // Simplify into 3 groups
             const west = { id: 'west', name: 'West League', color: '#ff0000', teams: [] };
             const mid = { id: 'mid', name: 'Central League', color: '#00ff00', teams: [] };
             const east = { id: 'east', name: 'East League', color: '#0000ff', teams: [] };
             
-            // Flatten all teams
             let allTeams = [];
             newData.forEach(c => allTeams.push(...c.teams));
             
@@ -612,22 +620,15 @@
             newData = [west, mid, east];
         } 
         else if (type === 'pac12return') {
-            // Find Pac12 object and others
             const pac12 = newData.find(c => c.id === 'pac12');
-            
-            // Define teams moving back
             const moveBack = ["Oregon", "Washington", "USC", "UCLA", "California", "Stanford", "Utah", "Arizona", "Arizona State", "Colorado"];
             
             newData.forEach(conf => {
-                if(conf.id === 'pac12') return; // Skip self
-                // Filter out moving teams from other conferences
+                if(conf.id === 'pac12') return;
                 const remaining = [];
                 conf.teams.forEach(t => {
-                    if(moveBack.includes(t.name)) {
-                        pac12.teams.push(t);
-                    } else {
-                        remaining.push(t);
-                    }
+                    if(moveBack.includes(t.name)) pac12.teams.push(t);
+                    else remaining.push(t);
                 });
                 conf.teams = remaining;
             });
@@ -635,12 +636,10 @@
         else if (type === 'superleague') {
              const super1 = { id: 's1', name: 'Super League A', color: '#D4AF37', teams: [] };
              const super2 = { id: 's2', name: 'Super League B', color: '#C0C0C0', teams: [] };
-             const lower = { id: 'rem', name: 'Development League', color: '#555', teams: [] };
+             const lower = { id: 'rem', name: 'Development League', color: '#555555', teams: [] };
 
              let allTeams = [];
              newData.forEach(c => allTeams.push(...c.teams));
-             
-             // Just simple logic: Top 40 by name length (randomish) to Super Leagues
              allTeams.forEach((t, i) => {
                  if (i < 32) super1.teams.push(t);
                  else if (i < 64) super2.teams.push(t);
@@ -650,13 +649,10 @@
         }
 
         renderBuilderView(newData);
-        // Automatically analyze the new preset
         analyzeBuilder();
     }
 
-    // --- ANALYSIS & MAP UPDATE ---
-    
-    // Scrapes the DOM of the builder to create a data object
+    // --- CORE LOGIC: SCRAPE DOM TO BUILD DATA ---
     function analyzeBuilder() {
         const grid = document.getElementById('builderGrid');
         const cards = grid.querySelectorAll('.conference-card');
@@ -664,23 +660,29 @@
         let builtData = [];
         
         cards.forEach(card => {
-            const confId = card.dataset.confId;
-            // Find original color/name from original data or use inline
-            let refConf = originalConferences.find(c => c.id === confId);
-            // Fallback for custom scenarios
+            // 1. Get Visual Properties from the Card Header
+            const header = card.querySelector('.conference-header');
             const name = card.querySelector('.conference-name').innerText;
-            const bg = card.querySelector('.conference-header').style.backgroundColor;
-            
+            // Get the computed background color so we match the visual exactly
+            const color = header.style.backgroundColor;
+
             let newConf = {
-                id: confId,
                 name: name,
-                color: bg,
+                color: color, 
                 teams: []
             };
 
+            // 2. Get Teams currently inside this card
             const items = card.querySelectorAll('.team-item');
             items.forEach(item => {
-                newConf.teams.push(JSON.parse(item.dataset.team));
+                const teamData = JSON.parse(item.dataset.team);
+                // We only want the team geo data, we assign the NEW conference details
+                newConf.teams.push({
+                    name: teamData.name,
+                    mascot: teamData.mascot,
+                    lat: teamData.lat,
+                    lng: teamData.lng
+                });
             });
 
             if(newConf.teams.length > 0) builtData.push(newConf);
@@ -690,13 +692,11 @@
     }
 
     function updateAnalysis(data) {
-        // Update Map
         updateMap(data);
-        // Update Table
         generateTravelData(data);
     }
 
-    // --- MAP FUNCTIONS ---
+    // --- MAP & CALCULATION ---
     function initMap() {
         map = L.map('map').setView([39.8283, -98.5795], 4);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -708,15 +708,13 @@
 
     function updateMap(data) {
         markersLayer.clearLayers();
-        
-        // Remove old legend if exists
         if (legendControl) map.removeControl(legendControl);
 
         data.forEach(conf => {
             conf.teams.forEach(team => {
                 const marker = L.circleMarker([team.lat, team.lng], {
                     radius: 6,
-                    fillColor: conf.color,
+                    fillColor: conf.color, // Uses the color scraped from the card
                     color: "#fff",
                     weight: 1,
                     opacity: 1,
@@ -726,14 +724,14 @@
                 marker.bindPopup(`
                     <b>${team.name}</b><br>
                     ${team.mascot}<br>
-                    <span style="color:${conf.color}; font-size:0.8em;">${conf.name}</span>
+                    <span style="color:${conf.color}; font-weight:bold;">${conf.name}</span>
                 `);
                 
                 marker.addTo(markersLayer);
             });
         });
 
-        // Add Legend
+        // Legend
         legendControl = L.control({position: 'bottomright'});
         legendControl.onAdd = function (map) {
             const div = L.DomUtil.create('div', 'legend');
@@ -752,9 +750,7 @@
         legendControl.addTo(map);
     }
 
-    // --- TRAVEL CALCULATION ---
     function deg2rad(deg) { return deg * (Math.PI/180); }
-
     function getDistanceInMiles(lat1, lon1, lat2, lon2) {
         const R = 3958.8; 
         const dLat = deg2rad(lat2 - lat1); 
@@ -805,7 +801,7 @@
         });
     }
 
-    // --- FILTER LOGIC (Original View Only) ---
+    // --- FILTER TEAMS (Read Only View) ---
     function filterTeams() {
         const input = document.getElementById('searchInput');
         const filter = input.value.toUpperCase();
@@ -826,7 +822,6 @@
             card.style.display = hasVisibleTeam ? "flex" : "none";
         });
     }
-
 </script>
 
 </body>
