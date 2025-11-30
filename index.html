@@ -91,7 +91,11 @@
             transition: transform 0.1s;
         }
 
-        button.action-btn:hover { transform: scale(1.05); background-color: #218838; }
+        button.secondary-btn {
+            background-color: #007bff;
+        }
+
+        button.action-btn:hover { transform: scale(1.05); filter: brightness(1.1); }
         button.action-btn:active { transform: scale(0.95); }
 
         /* Main Grid */
@@ -112,6 +116,11 @@
             flex-direction: column;
             height: 500px;
             border: 1px solid #e0e0e0;
+            transition: box-shadow 0.2s;
+        }
+
+        .conference-card:hover {
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
         }
 
         .conference-header {
@@ -121,9 +130,23 @@
             justify-content: space-between;
             align-items: center;
             border-radius: 8px 8px 0 0;
+            cursor: context-menu; /* Hint that right click does something */
+            position: relative;
         }
 
-        .conference-name { font-weight: 700; font-size: 1rem; }
+        .conference-name { 
+            font-weight: 700; 
+            font-size: 1rem; 
+            cursor: text;
+            border-bottom: 1px dashed rgba(255,255,255,0.3);
+        }
+        
+        .conference-name:focus {
+            outline: none;
+            background: rgba(0,0,0,0.2);
+            border-radius: 4px;
+            padding: 2px 5px;
+        }
         
         .team-count {
             background: rgba(0,0,0,0.2);
@@ -210,13 +233,34 @@
             font-size: 0.9rem;
             background: #eee;
         }
+        
+        /* Helper Tooltip */
+        .tooltip-hint {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        .conference-header:hover .tooltip-hint {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
 
 <header>
     <h1>FBS Conference Architect</h1>
-    <p class="subtitle">Drag teams to realign conferences, then analyze the travel impact.</p>
+    <p class="subtitle">Drag teams to realign. Right-click headers to change colors. Click text to rename.</p>
 </header>
 
 <div class="controls-bar">
@@ -235,6 +279,7 @@
     </div>
 
     <div class="control-group">
+        <button class="action-btn secondary-btn" onclick="addNewConference()">➕ New Conference</button>
         <button class="action-btn" onclick="analyzeBuilder()">📊 Update Map & Stats</button>
     </div>
 </div>
@@ -487,46 +532,89 @@
         grid.innerHTML = '';
         
         data.forEach(conf => {
-            const card = document.createElement('div');
-            card.className = 'conference-card';
-            card.dataset.confId = conf.id;
-            
-            card.innerHTML = `
-                <div class="conference-header" style="background-color: ${conf.color};">
-                    <span class="conference-name">${conf.name}</span>
-                    <span class="team-count">${conf.teams.length}</span>
-                </div>
-                <ul class="team-list" id="list-${conf.id}"></ul>
-            `;
-            
-            const list = card.querySelector('.team-list');
-            
-            conf.teams.forEach(team => {
-                const li = document.createElement('li');
-                li.className = 'team-item';
-                li.dataset.team = JSON.stringify(team); // Safe Storage
-                li.innerHTML = `
-                    <div class="school-info">
-                        <span class="school-name">${team.name}</span>
-                        <span class="mascot-name">${team.mascot}</span>
-                    </div>
-                `;
-                list.appendChild(li);
-            });
-
-            grid.appendChild(card);
-            
-            // Init SortableJS
-            new Sortable(list, {
-                group: 'conferences',
-                animation: 150,
-                ghostClass: 'sortable-ghost',
-                dragClass: 'sortable-drag',
-                onEnd: function () {
-                    updateCounts();
-                }
-            });
+            createConferenceCard(conf, grid);
         });
+    }
+
+    // New Helper to create a single card
+    function createConferenceCard(conf, container) {
+        const card = document.createElement('div');
+        card.className = 'conference-card';
+        card.dataset.confId = conf.id;
+        
+        card.innerHTML = `
+            <div class="conference-header" style="background-color: ${conf.color};">
+                <span class="conference-name" contenteditable="true" spellcheck="false">${conf.name}</span>
+                <span class="team-count">${conf.teams.length}</span>
+                <input type="color" class="color-picker" style="display:none;" value="${conf.color}">
+                <div class="tooltip-hint">Right-click to change color</div>
+            </div>
+            <ul class="team-list" id="list-${conf.id}"></ul>
+        `;
+        
+        // Add Teams
+        const list = card.querySelector('.team-list');
+        conf.teams.forEach(team => {
+            const li = document.createElement('li');
+            li.className = 'team-item';
+            li.dataset.team = JSON.stringify(team); // Safe Storage
+            li.innerHTML = `
+                <div class="school-info">
+                    <span class="school-name">${team.name}</span>
+                    <span class="mascot-name">${team.mascot}</span>
+                </div>
+            `;
+            list.appendChild(li);
+        });
+
+        container.appendChild(card);
+
+        // Setup Right Click for Color
+        const header = card.querySelector('.conference-header');
+        const picker = card.querySelector('.color-picker');
+        
+        header.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            picker.click();
+        });
+
+        picker.addEventListener('input', (e) => {
+            header.style.backgroundColor = e.target.value;
+        });
+
+        picker.addEventListener('change', (e) => {
+             analyzeBuilder(); // Update map after color selection is finalized
+        });
+        
+        // Setup Sortable
+        new Sortable(list, {
+            group: 'conferences',
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            dragClass: 'sortable-drag',
+            onEnd: function () {
+                updateCounts();
+            }
+        });
+    }
+
+    // --- ADD NEW CONFERENCE ---
+    function addNewConference() {
+        const grid = document.getElementById('builderGrid');
+        const id = 'custom-' + Date.now();
+        // Generate random color
+        const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+        
+        const newConf = {
+            id: id,
+            name: "New Conference",
+            color: randomColor,
+            teams: []
+        };
+        
+        createConferenceCard(newConf, grid);
+        // Scroll to the bottom
+        window.scrollTo(0, document.body.scrollHeight);
     }
 
     function updateCounts() {
@@ -618,7 +706,11 @@
                 // Header scraping
                 const header = card.querySelector('.conference-header');
                 const name = card.querySelector('.conference-name').innerText;
-                const color = header.style.backgroundColor;
+                // Use computed style to get the current color (whether default or changed)
+                const color = window.getComputedStyle(header).backgroundColor;
+                
+                // Convert RGB to Hex helper (Leaflet likes Hex sometimes, though RGB works too)
+                // We'll just pass the color string directly as Leaflet handles rgb() strings.
 
                 let newConf = { name: name, color: color, teams: [] };
 
@@ -659,7 +751,7 @@
                 const marker = L.circleMarker([team.lat, team.lng], {
                     radius: 6, fillColor: conf.color, color: "#fff", weight: 1, opacity: 1, fillOpacity: 0.8
                 });
-                marker.bindPopup(`<b>${team.name}</b><br>${team.mascot}<br><span style="color:${conf.color}; font-weight:bold;">${conf.name}</span>`);
+                marker.bindPopup(`<b>${team.name}</b><br>${team.mascot}<br><span style="color:${conf.color}; font-weight:bold; background:#eee; padding:2px;">${conf.name}</span>`);
                 marker.addTo(markersLayer);
             });
         });
@@ -668,8 +760,9 @@
         legendControl.onAdd = function () {
             const div = L.DomUtil.create('div', 'legend');
             div.style.background = 'white'; div.style.padding = '10px'; div.style.borderRadius = '5px';
+            div.style.maxHeight = '300px'; div.style.overflowY = 'auto';
             data.forEach(conf => {
-                div.innerHTML += `<i style="background:${conf.color}; width:10px; height:10px; display:inline-block; margin-right:5px; border-radius:50%;"></i><span style="font-size:0.8rem;">${conf.name}</span><br>`;
+                div.innerHTML += `<div style="display:flex; align-items:center; margin-bottom:4px;"><i style="background:${conf.color}; width:12px; height:12px; display:inline-block; margin-right:5px; border-radius:50%;"></i><span style="font-size:0.8rem;">${conf.name}</span></div>`;
             });
             return div;
         };
