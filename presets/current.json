@@ -1,0 +1,883 @@
+[
+  {
+    "id": "aac",
+    "name": "American Athletic",
+    "color": "#002d72",
+    "teams": [
+      {
+        "name": "Army",
+        "mascot": "Black Knights",
+        "lat": 41.387,
+        "lng": -73.964
+      },
+      {
+        "name": "Charlotte",
+        "mascot": "49ers",
+        "lat": 35.307,
+        "lng": -80.735
+      },
+      {
+        "name": "East Carolina",
+        "mascot": "Pirates",
+        "lat": 35.607,
+        "lng": -77.366
+      },
+      {
+        "name": "Florida Atlantic",
+        "mascot": "Owls",
+        "lat": 26.368,
+        "lng": -80.101
+      },
+      {
+        "name": "Memphis",
+        "mascot": "Tigers",
+        "lat": 35.119,
+        "lng": -89.937
+      },
+      {
+        "name": "Navy",
+        "mascot": "Midshipmen",
+        "lat": 38.981,
+        "lng": -76.49
+      },
+      {
+        "name": "North Texas",
+        "mascot": "Mean Green",
+        "lat": 33.208,
+        "lng": -97.153
+      },
+      {
+        "name": "Rice",
+        "mascot": "Owls",
+        "lat": 29.716,
+        "lng": -95.409
+      },
+      {
+        "name": "South Florida",
+        "mascot": "Bulls",
+        "lat": 28.058,
+        "lng": -82.413
+      },
+      {
+        "name": "Temple",
+        "mascot": "Owls",
+        "lat": 39.98,
+        "lng": -75.158
+      },
+      {
+        "name": "Tulane",
+        "mascot": "Green Wave",
+        "lat": 29.935,
+        "lng": -90.122
+      },
+      {
+        "name": "Tulsa",
+        "mascot": "Golden Hurricane",
+        "lat": 36.152,
+        "lng": -95.946
+      },
+      {
+        "name": "UAB",
+        "mascot": "Blazers",
+        "lat": 33.501,
+        "lng": -86.807
+      },
+      {
+        "name": "UTSA",
+        "mascot": "Roadrunners",
+        "lat": 29.582,
+        "lng": -98.619
+      }
+    ]
+  },
+  {
+    "id": "acc",
+    "name": "ACC",
+    "color": "#013ca6",
+    "teams": [
+      {
+        "name": "Boston College",
+        "mascot": "Eagles",
+        "lat": 42.335,
+        "lng": -71.168
+      },
+      {
+        "name": "California",
+        "mascot": "Golden Bears",
+        "lat": 37.871,
+        "lng": -122.25
+      },
+      {
+        "name": "Clemson",
+        "mascot": "Tigers",
+        "lat": 34.678,
+        "lng": -82.843
+      },
+      {
+        "name": "Duke",
+        "mascot": "Blue Devils",
+        "lat": 35.996,
+        "lng": -78.942
+      },
+      {
+        "name": "Florida State",
+        "mascot": "Seminoles",
+        "lat": 30.436,
+        "lng": -84.304
+      },
+      {
+        "name": "Georgia Tech",
+        "mascot": "Yellow Jackets",
+        "lat": 33.772,
+        "lng": -84.392
+      },
+      {
+        "name": "Louisville",
+        "mascot": "Cardinals",
+        "lat": 38.206,
+        "lng": -85.759
+      },
+      {
+        "name": "Miami",
+        "mascot": "Hurricanes",
+        "lat": 25.72,
+        "lng": -80.278
+      },
+      {
+        "name": "NC State",
+        "mascot": "Wolfpack",
+        "lat": 35.786,
+        "lng": -78.682
+      },
+      {
+        "name": "North Carolina",
+        "mascot": "Tar Heels",
+        "lat": 35.904,
+        "lng": -79.046
+      },
+      {
+        "name": "Pittsburgh",
+        "mascot": "Panthers",
+        "lat": 40.444,
+        "lng": -79.953
+      },
+      {
+        "name": "SMU",
+        "mascot": "Mustangs",
+        "lat": 32.842,
+        "lng": -96.782
+      },
+      {
+        "name": "Stanford",
+        "mascot": "Cardinal",
+        "lat": 37.426,
+        "lng": -122.164
+      },
+      {
+        "name": "Syracuse",
+        "mascot": "Orange",
+        "lat": 43.036,
+        "lng": -76.136
+      },
+      {
+        "name": "Virginia",
+        "mascot": "Cavaliers",
+        "lat": 38.031,
+        "lng": -78.513
+      },
+      {
+        "name": "Virginia Tech",
+        "mascot": "Hokies",
+        "lat": 37.228,
+        "lng": -80.423
+      },
+      {
+        "name": "Wake Forest",
+        "mascot": "Demon Deacons",
+        "lat": 36.135,
+        "lng": -80.279
+      }
+    ]
+  },
+  {
+    "id": "big12",
+    "name": "Big 12",
+    "color": "#c41e3a",
+    "teams": [
+      {
+        "name": "Arizona",
+        "mascot": "Wildcats",
+        "lat": 32.228,
+        "lng": -110.948
+      },
+      {
+        "name": "Arizona State",
+        "mascot": "Sun Devils",
+        "lat": 33.424,
+        "lng": -111.932
+      },
+      {
+        "name": "Baylor",
+        "mascot": "Bears",
+        "lat": 31.547,
+        "lng": -97.113
+      },
+      {
+        "name": "BYU",
+        "mascot": "Cougars",
+        "lat": 40.252,
+        "lng": -111.649
+      },
+      {
+        "name": "Cincinnati",
+        "mascot": "Bearcats",
+        "lat": 39.131,
+        "lng": -84.516
+      },
+      {
+        "name": "Colorado",
+        "mascot": "Buffaloes",
+        "lat": 40.009,
+        "lng": -105.267
+      },
+      {
+        "name": "Houston",
+        "mascot": "Cougars",
+        "lat": 29.719,
+        "lng": -95.341
+      },
+      {
+        "name": "Iowa State",
+        "mascot": "Cyclones",
+        "lat": 42.023,
+        "lng": -93.647
+      },
+      {
+        "name": "Kansas",
+        "mascot": "Jayhawks",
+        "lat": 38.956,
+        "lng": -95.247
+      },
+      {
+        "name": "Kansas State",
+        "mascot": "Wildcats",
+        "lat": 39.197,
+        "lng": -96.584
+      },
+      {
+        "name": "Oklahoma State",
+        "mascot": "Cowboys",
+        "lat": 36.125,
+        "lng": -97.066
+      },
+      {
+        "name": "TCU",
+        "mascot": "Horned Frogs",
+        "lat": 32.709,
+        "lng": -97.368
+      },
+      {
+        "name": "Texas Tech",
+        "mascot": "Red Raiders",
+        "lat": 33.585,
+        "lng": -101.879
+      },
+      {
+        "name": "UCF",
+        "mascot": "Knights",
+        "lat": 28.608,
+        "lng": -81.196
+      },
+      {
+        "name": "Utah",
+        "mascot": "Utes",
+        "lat": 40.762,
+        "lng": -111.846
+      },
+      {
+        "name": "West Virginia",
+        "mascot": "Mountaineers",
+        "lat": 39.635,
+        "lng": -79.955
+      }
+    ]
+  },
+  {
+    "id": "big10",
+    "name": "Big Ten",
+    "color": "#0088ce",
+    "teams": [
+      {
+        "name": "Illinois",
+        "mascot": "Fighting Illini",
+        "lat": 40.099,
+        "lng": -88.235
+      },
+      {
+        "name": "Indiana",
+        "mascot": "Hoosiers",
+        "lat": 39.176,
+        "lng": -86.512
+      },
+      {
+        "name": "Iowa",
+        "mascot": "Hawkeyes",
+        "lat": 41.658,
+        "lng": -91.541
+      },
+      {
+        "name": "Maryland",
+        "mascot": "Terrapins",
+        "lat": 38.99,
+        "lng": -76.947
+      },
+      {
+        "name": "Michigan",
+        "mascot": "Wolverines",
+        "lat": 42.275,
+        "lng": -83.743
+      },
+      {
+        "name": "Michigan State",
+        "mascot": "Spartans",
+        "lat": 42.723,
+        "lng": -84.484
+      },
+      {
+        "name": "Minnesota",
+        "mascot": "Golden Gophers",
+        "lat": 44.976,
+        "lng": -93.228
+      },
+      {
+        "name": "Nebraska",
+        "mascot": "Cornhuskers",
+        "lat": 40.82,
+        "lng": -96.704
+      },
+      {
+        "name": "Northwestern",
+        "mascot": "Wildcats",
+        "lat": 42.058,
+        "lng": -87.676
+      },
+      {
+        "name": "Ohio State",
+        "mascot": "Buckeyes",
+        "lat": 40.001,
+        "lng": -83.019
+      },
+      {
+        "name": "Oregon",
+        "mascot": "Ducks",
+        "lat": 44.044,
+        "lng": -123.067
+      },
+      {
+        "name": "Penn State",
+        "mascot": "Nittany Lions",
+        "lat": 40.801,
+        "lng": -77.859
+      },
+      {
+        "name": "Purdue",
+        "mascot": "Boilermakers",
+        "lat": 40.428,
+        "lng": -86.913
+      },
+      {
+        "name": "Rutgers",
+        "mascot": "Scarlet Knights",
+        "lat": 40.5,
+        "lng": -74.447
+      },
+      {
+        "name": "UCLA",
+        "mascot": "Bruins",
+        "lat": 34.07,
+        "lng": -118.445
+      },
+      {
+        "name": "USC",
+        "mascot": "Trojans",
+        "lat": 34.021,
+        "lng": -118.286
+      },
+      {
+        "name": "Washington",
+        "mascot": "Huskies",
+        "lat": 47.656,
+        "lng": -122.306
+      },
+      {
+        "name": "Wisconsin",
+        "mascot": "Badgers",
+        "lat": 43.07,
+        "lng": -89.412
+      }
+    ]
+  },
+  {
+    "id": "cusa",
+    "name": "Conference USA",
+    "color": "#cc0000",
+    "teams": [
+      {
+        "name": "FIU",
+        "mascot": "Panthers",
+        "lat": 25.753,
+        "lng": -80.375
+      },
+      {
+        "name": "Jacksonville State",
+        "mascot": "Gamecocks",
+        "lat": 33.822,
+        "lng": -85.766
+      },
+      {
+        "name": "Kennesaw State",
+        "mascot": "Owls",
+        "lat": 34.037,
+        "lng": -84.583
+      },
+      {
+        "name": "Liberty",
+        "mascot": "Flames",
+        "lat": 37.351,
+        "lng": -79.183
+      },
+      {
+        "name": "Louisiana Tech",
+        "mascot": "Bulldogs",
+        "lat": 32.531,
+        "lng": -92.65
+      },
+      {
+        "name": "Middle Tennessee",
+        "mascot": "Blue Raiders",
+        "lat": 35.847,
+        "lng": -86.366
+      },
+      {
+        "name": "New Mexico State",
+        "mascot": "Aggies",
+        "lat": 32.279,
+        "lng": -106.746
+      },
+      {
+        "name": "Sam Houston",
+        "mascot": "Bearkats",
+        "lat": 30.713,
+        "lng": -95.546
+      },
+      {
+        "name": "UTEP",
+        "mascot": "Miners",
+        "lat": 31.773,
+        "lng": -106.505
+      },
+      {
+        "name": "Western Kentucky",
+        "mascot": "Hilltoppers",
+        "lat": 36.984,
+        "lng": -86.456
+      }
+    ]
+  },
+  {
+    "id": "mac",
+    "name": "MAC",
+    "color": "#006747",
+    "teams": [
+      {
+        "name": "Akron",
+        "mascot": "Zips",
+        "lat": 41.07,
+        "lng": -81.512
+      },
+      {
+        "name": "Ball State",
+        "mascot": "Cardinals",
+        "lat": 40.203,
+        "lng": -85.409
+      },
+      {
+        "name": "Bowling Green",
+        "mascot": "Falcons",
+        "lat": 41.377,
+        "lng": -83.623
+      },
+      {
+        "name": "Buffalo",
+        "mascot": "Bulls",
+        "lat": 42.999,
+        "lng": -78.786
+      },
+      {
+        "name": "Central Michigan",
+        "mascot": "Chippewas",
+        "lat": 43.58,
+        "lng": -84.777
+      },
+      {
+        "name": "Eastern Michigan",
+        "mascot": "Eagles",
+        "lat": 42.251,
+        "lng": -83.624
+      },
+      {
+        "name": "Kent State",
+        "mascot": "Golden Flashes",
+        "lat": 41.144,
+        "lng": -81.339
+      },
+      {
+        "name": "Miami (OH)",
+        "mascot": "RedHawks",
+        "lat": 39.511,
+        "lng": -84.733
+      },
+      {
+        "name": "Northern Illinois",
+        "mascot": "Huskies",
+        "lat": 41.933,
+        "lng": -88.775
+      },
+      {
+        "name": "Ohio",
+        "mascot": "Bobcats",
+        "lat": 39.324,
+        "lng": -82.099
+      },
+      {
+        "name": "Toledo",
+        "mascot": "Rockets",
+        "lat": 41.657,
+        "lng": -83.613
+      },
+      {
+        "name": "Western Michigan",
+        "mascot": "Broncos",
+        "lat": 42.282,
+        "lng": -85.613
+      }
+    ]
+  },
+  {
+    "id": "mwc",
+    "name": "Mountain West",
+    "color": "#6d2c91",
+    "teams": [
+      {
+        "name": "Air Force",
+        "mascot": "Falcons",
+        "lat": 38.996,
+        "lng": -104.843
+      },
+      {
+        "name": "Boise State",
+        "mascot": "Broncos",
+        "lat": 43.602,
+        "lng": -116.196
+      },
+      {
+        "name": "Colorado State",
+        "mascot": "Rams",
+        "lat": 40.573,
+        "lng": -105.083
+      },
+      {
+        "name": "Fresno State",
+        "mascot": "Bulldogs",
+        "lat": 36.812,
+        "lng": -119.75
+      },
+      {
+        "name": "Hawaii",
+        "mascot": "Rainbow Warriors",
+        "lat": 21.298,
+        "lng": -157.817
+      },
+      {
+        "name": "Nevada",
+        "mascot": "Wolf Pack",
+        "lat": 39.546,
+        "lng": -119.816
+      },
+      {
+        "name": "New Mexico",
+        "mascot": "Lobos",
+        "lat": 35.084,
+        "lng": -106.619
+      },
+      {
+        "name": "San Diego State",
+        "mascot": "Aztecs",
+        "lat": 32.775,
+        "lng": -117.071
+      },
+      {
+        "name": "San Jose State",
+        "mascot": "Spartans",
+        "lat": 37.335,
+        "lng": -121.881
+      },
+      {
+        "name": "UNLV",
+        "mascot": "Rebels",
+        "lat": 36.107,
+        "lng": -115.143
+      },
+      {
+        "name": "Utah State",
+        "mascot": "Aggies",
+        "lat": 41.745,
+        "lng": -111.809
+      },
+      {
+        "name": "Wyoming",
+        "mascot": "Cowboys",
+        "lat": 41.312,
+        "lng": -105.577
+      }
+    ]
+  },
+  {
+    "id": "pac12",
+    "name": "Pac-12",
+    "color": "#000000",
+    "teams": [
+      {
+        "name": "Oregon State",
+        "mascot": "Beavers",
+        "lat": 44.563,
+        "lng": -123.283
+      },
+      {
+        "name": "Washington State",
+        "mascot": "Cougars",
+        "lat": 46.731,
+        "lng": -117.156
+      }
+    ]
+  },
+  {
+    "id": "sec",
+    "name": "SEC",
+    "color": "#ffd700",
+    "teams": [
+      {
+        "name": "Alabama",
+        "mascot": "Crimson Tide",
+        "lat": 33.209,
+        "lng": -87.545
+      },
+      {
+        "name": "Arkansas",
+        "mascot": "Razorbacks",
+        "lat": 36.068,
+        "lng": -94.175
+      },
+      {
+        "name": "Auburn",
+        "mascot": "Tigers",
+        "lat": 32.602,
+        "lng": -85.491
+      },
+      {
+        "name": "Florida",
+        "mascot": "Gators",
+        "lat": 29.643,
+        "lng": -82.355
+      },
+      {
+        "name": "Georgia",
+        "mascot": "Bulldogs",
+        "lat": 33.948,
+        "lng": -83.373
+      },
+      {
+        "name": "Kentucky",
+        "mascot": "Wildcats",
+        "lat": 38.029,
+        "lng": -84.505
+      },
+      {
+        "name": "LSU",
+        "mascot": "Tigers",
+        "lat": 30.412,
+        "lng": -91.185
+      },
+      {
+        "name": "Mississippi State",
+        "mascot": "Bulldogs",
+        "lat": 33.454,
+        "lng": -88.794
+      },
+      {
+        "name": "Missouri",
+        "mascot": "Tigers",
+        "lat": 38.935,
+        "lng": -92.328
+      },
+      {
+        "name": "Oklahoma",
+        "mascot": "Sooners",
+        "lat": 35.202,
+        "lng": -97.442
+      },
+      {
+        "name": "Ole Miss",
+        "mascot": "Rebels",
+        "lat": 34.364,
+        "lng": -89.526
+      },
+      {
+        "name": "South Carolina",
+        "mascot": "Gamecocks",
+        "lat": 33.993,
+        "lng": -81.026
+      },
+      {
+        "name": "Tennessee",
+        "mascot": "Volunteers",
+        "lat": 35.955,
+        "lng": -83.925
+      },
+      {
+        "name": "Texas",
+        "mascot": "Longhorns",
+        "lat": 30.283,
+        "lng": -97.732
+      },
+      {
+        "name": "Texas A&M",
+        "mascot": "Aggies",
+        "lat": 30.61,
+        "lng": -96.34
+      },
+      {
+        "name": "Vanderbilt",
+        "mascot": "Commodores",
+        "lat": 36.143,
+        "lng": -86.804
+      }
+    ]
+  },
+  {
+    "id": "sunbelt",
+    "name": "Sun Belt",
+    "color": "#f4a01c",
+    "teams": [
+      {
+        "name": "Appalachian State",
+        "mascot": "Mountaineers",
+        "lat": 36.211,
+        "lng": -81.685
+      },
+      {
+        "name": "Arkansas State",
+        "mascot": "Red Wolves",
+        "lat": 35.848,
+        "lng": -90.675
+      },
+      {
+        "name": "Coastal Carolina",
+        "mascot": "Chanticleers",
+        "lat": 33.793,
+        "lng": -79.012
+      },
+      {
+        "name": "Georgia Southern",
+        "mascot": "Eagles",
+        "lat": 32.421,
+        "lng": -81.786
+      },
+      {
+        "name": "Georgia State",
+        "mascot": "Panthers",
+        "lat": 33.753,
+        "lng": -84.385
+      },
+      {
+        "name": "James Madison",
+        "mascot": "Dukes",
+        "lat": 38.435,
+        "lng": -78.875
+      },
+      {
+        "name": "Louisiana",
+        "mascot": "Ragin' Cajuns",
+        "lat": 30.211,
+        "lng": -92.019
+      },
+      {
+        "name": "Marshall",
+        "mascot": "Thundering Herd",
+        "lat": 38.423,
+        "lng": -82.425
+      },
+      {
+        "name": "Old Dominion",
+        "mascot": "Monarchs",
+        "lat": 36.885,
+        "lng": -76.305
+      },
+      {
+        "name": "South Alabama",
+        "mascot": "Jaguars",
+        "lat": 30.694,
+        "lng": -88.19
+      },
+      {
+        "name": "Southern Miss",
+        "mascot": "Golden Eagles",
+        "lat": 31.329,
+        "lng": -89.333
+      },
+      {
+        "name": "Texas State",
+        "mascot": "Bobcats",
+        "lat": 29.889,
+        "lng": -97.938
+      },
+      {
+        "name": "Troy",
+        "mascot": "Trojans",
+        "lat": 31.8,
+        "lng": -85.957
+      },
+      {
+        "name": "ULM",
+        "mascot": "Warhawks",
+        "lat": 32.531,
+        "lng": -92.066
+      }
+    ]
+  },
+  {
+    "id": "ind",
+    "name": "Independents",
+    "color": "#666666",
+    "teams": [
+      {
+        "name": "Notre Dame",
+        "mascot": "Fighting Irish",
+        "lat": 41.703,
+        "lng": -86.239
+      },
+      {
+        "name": "UConn",
+        "mascot": "Huskies",
+        "lat": 41.808,
+        "lng": -72.249
+      },
+      {
+        "name": "UMass",
+        "mascot": "Minutemen",
+        "lat": 42.386,
+        "lng": -72.529
+      }
+    ]
+  }
+]
