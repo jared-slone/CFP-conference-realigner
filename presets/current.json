@@ -426,7 +426,7 @@
         "name": "Delaware",
         "mascot": "Fightin' Blue Hens",
         "lat": 39.681,
-        "lng": 75.752
+        "lng": -75.752
       },
       {
         "name": "FIU",
@@ -468,7 +468,7 @@
         "name": "Missouri State",
         "mascot": "Bears",
         "lat": 37.964,
-        "lng": 91.832
+        "lng": -91.832
       },
       {
         "name": "New Mexico State",
