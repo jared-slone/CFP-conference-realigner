@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     
     <style>
-        /* CSS styles remain exactly the same */
         :root { --primary-color: #004d99; --secondary-color: #f4f4f4; --text-color: #333; --card-bg: #fff; --border-radius: 8px; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--secondary-color); color: var(--text-color); margin: 0; padding: 0; }
         header { background-color: var(--primary-color); color: white; padding: 1rem; text-align: center; }
@@ -32,7 +31,11 @@
         .container { max-width: 1600px; margin: 2rem auto; padding: 0 1rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
         .conference-card { background: var(--card-bg); border-radius: var(--border-radius); box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; height: 500px; border: 1px solid #e0e0e0; transition: box-shadow 0.2s; }
         .conference-card:hover { box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-        .conference-header { padding: 0.8rem 1rem; color: white; display: flex; justify-content: space-between; align-items: center; border-radius: 8px 8px 0 0; cursor: context-menu; position: relative; }
+        
+        /* UPDATED: Changed cursor to grab to indicate draggability */
+        .conference-header { padding: 0.8rem 1rem; color: white; display: flex; justify-content: space-between; align-items: center; border-radius: 8px 8px 0 0; cursor: grab; position: relative; }
+        .conference-header:active { cursor: grabbing; }
+
         .conference-name { font-weight: 700; font-size: 1rem; cursor: text; border-bottom: 1px dashed rgba(255,255,255,0.3); }
         .conference-name:focus { outline: none; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 2px 5px; }
         .team-count { background: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; }
@@ -43,6 +46,7 @@
         .school-info { display: flex; flex-direction: column; }
         .school-name { font-weight: 700; color: #222; font-size: 0.95rem; }
         .mascot-name { font-weight: 400; color: #666; font-size: 0.85rem;}
+        
         .sortable-ghost { opacity: 0.4; background-color: #eef; border: 2px dashed #999; }
         .sortable-drag { opacity: 1; background: white; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transform: scale(1.02); }
         
@@ -64,7 +68,7 @@
 
 <header>
     <h1>FBS Conference Architect</h1>
-    <p class="subtitle">Drag teams to realign. Right-click headers to change colors. Click text to rename.</p>
+    <p class="subtitle">Drag headers to move Conferences. Drag teams to realign. Right-click headers to change colors.</p>
 </header>
 
 <div class="controls-bar">
@@ -138,9 +142,23 @@
     // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
         initMap();
+        initConferenceSorting(); // Initialize main grid sorting
         // Load the default "current" alignment from the JSON file
         loadScenario('current');
     });
+
+    // --- NEW: FUNCTION TO ENABLE CONFERENCE DRAGGING ---
+    function initConferenceSorting() {
+        const grid = document.getElementById('builderGrid');
+        new Sortable(grid, {
+            animation: 150,
+            handle: '.conference-header', // Users must click the header to drag the card
+            filter: '.conference-name, .color-picker', // Don't drag if clicking the text input or color picker
+            preventOnFilter: false, // Allows text selection and input focus
+            ghostClass: 'sortable-ghost',
+            dragClass: 'sortable-drag'
+        });
+    }
 
     // --- RENDER BUILDER ---
     function renderBuilderView(data) {
@@ -252,6 +270,7 @@
             })
             .catch(error => {
                 console.error("Error loading scenario:", error);
+                // Note: For demo purposes if files fail, we just render empty or mock
                 alert("Error loading preset. Make sure you are running a local server (not opening the file directly) and that the presets folder exists.");
             });
     }
